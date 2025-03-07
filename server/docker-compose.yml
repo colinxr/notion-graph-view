@@ -1,0 +1,64 @@
+services:
+  mongodb:
+    image: mongo:latest
+    platform: linux/arm64/v8
+    container_name: notion-graph-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - notion-graph-network
+
+  mongo-express:
+    image: mongo-express:latest
+    platform: linux/arm64
+    container_name: notion-graph-mongo-express
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    networks:
+      - notion-graph-network
+
+  redis:
+    image: redis:latest
+    platform: linux/arm64
+    container_name: notion-graph-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - notion-graph-network
+
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    platform: linux/arm64
+    container_name: notion-graph-redis-insight
+    ports:
+      - "8082:8001"
+    volumes:
+      - redis_insight_data:/db
+    depends_on:
+      - redis
+    networks:
+      - notion-graph-network
+
+volumes:
+  mongodb_data:
+  redis_data:
+  redis_insight_data:
+
+networks:
+  notion-graph-network:
+    driver: bridge 
