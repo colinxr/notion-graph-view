@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -16,6 +16,7 @@ import { AuthResponseDto } from '../dtos/auth-response.dto';
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
