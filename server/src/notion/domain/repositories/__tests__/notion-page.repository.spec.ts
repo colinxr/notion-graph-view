@@ -10,6 +10,7 @@ describe('INotionPageRepository', () => {
       findByDatabaseId: jest.fn(),
       findWithBacklinks: jest.fn(),
       findOutgoingBacklinks: jest.fn(),
+      findAll: jest.fn(),
       save: jest.fn(),
       saveMany: jest.fn(),
       delete: jest.fn(),
@@ -22,5 +23,6 @@ describe('INotionPageRepository', () => {
     expect(mockRepository.save).toBeDefined();
     expect(mockRepository.saveMany).toBeDefined();
     expect(mockRepository.delete).toBeDefined();
+    expect(mockRepository.findAll).toBeDefined();
   });
 });

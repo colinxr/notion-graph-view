@@ -5,13 +5,13 @@ import { EventHandler } from '../decorators/event-handler.decorator';
 
 // Mock Events
 export class TestEvent implements IDomainEvent {
-  eventType = 'TestEvent';
+  eventName = 'TestEvent';
   occurredOn = new Date();
   constructor(public readonly data: string) {}
 }
 
 export class AnotherTestEvent implements IDomainEvent {
-  eventType = 'AnotherTestEvent';
+  eventName = 'AnotherTestEvent';
   occurredOn = new Date();
   constructor(public readonly data: number) {}
 }

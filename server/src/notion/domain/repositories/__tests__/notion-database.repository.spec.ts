@@ -9,6 +9,7 @@ describe('INotionDatabaseRepository', () => {
       findById: jest.fn(),
       findByWorkspaceId: jest.fn(),
       findByOwnerId: jest.fn(),
+      findAll: jest.fn(),
       save: jest.fn(),
       delete: jest.fn(),
     };
@@ -16,6 +17,7 @@ describe('INotionDatabaseRepository', () => {
     expect(mockRepository.findById).toBeDefined();
     expect(mockRepository.findByWorkspaceId).toBeDefined();
     expect(mockRepository.findByOwnerId).toBeDefined();
+    expect(mockRepository.findAll).toBeDefined();
     expect(mockRepository.save).toBeDefined();
     expect(mockRepository.delete).toBeDefined();
   });

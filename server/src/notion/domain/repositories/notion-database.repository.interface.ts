@@ -5,6 +5,7 @@ export interface INotionDatabaseRepository extends IRepository<NotionDatabase> {
   findById(id: string): Promise<NotionDatabase | null>;
   findByWorkspaceId(workspaceId: string): Promise<NotionDatabase[]>;
   findByOwnerId(ownerId: string): Promise<NotionDatabase[]>;
+  findAll(): Promise<NotionDatabase[]>
   save(database: NotionDatabase): Promise<void>;
   delete(id: string): Promise<void>;
 }

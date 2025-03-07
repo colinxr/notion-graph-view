@@ -3,7 +3,7 @@ import { IDomainEvent } from '../../../shared/kernel/interfaces/domain-event.int
 export interface PageUpdatedEventProps {
   pageId: string;
   databaseId: string;
-  occurredAt: Date;
+  occurredOn: Date;
   changes?: string[];
 }
 
@@ -11,13 +11,13 @@ export class PageUpdatedEvent implements IDomainEvent {
   private readonly _eventName: string = 'PageUpdated';
   private readonly _pageId: string;
   private readonly _databaseId: string;
-  private readonly _occurredAt: Date;
+  private readonly _occurredOn: Date;
   private readonly _changes?: string[];
 
   constructor(props: PageUpdatedEventProps) {
     this._pageId = props.pageId;
     this._databaseId = props.databaseId;
-    this._occurredAt = props.occurredAt;
+    this._occurredOn = props.occurredOn;
     this._changes = props.changes;
   }
 
@@ -33,8 +33,8 @@ export class PageUpdatedEvent implements IDomainEvent {
     return this._databaseId;
   }
 
-  get occurredAt(): Date {
-    return this._occurredAt;
+  get occurredOn(): Date {
+    return this._occurredOn;
   }
 
   get changes(): string[] | undefined {

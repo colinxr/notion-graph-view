@@ -14,6 +14,8 @@ export interface NotionDatabaseProps {
   pages?: NotionPage[];
   description?: string;
   url?: string;
+  createdAt: Date;
+  updatedAt: Date ;
 }
 
 export class NotionDatabase implements IEntity, IAggregateRoot {
@@ -26,6 +28,8 @@ export class NotionDatabase implements IEntity, IAggregateRoot {
   private _description?: string;
   private _url?: string;
   private _domainEvents: IDomainEvent[] = [];
+  private _createdAt: Date;
+  private _updatedAt: Date ;
 
   constructor(props: NotionDatabaseProps) {
     this._id = props.id;
@@ -36,6 +40,8 @@ export class NotionDatabase implements IEntity, IAggregateRoot {
     this._pages = props.pages || [];
     this._description = props.description;
     this._url = props.url;
+    this._createdAt = props.createdAt;
+    this._updatedAt = props.updatedAt
   }
 
   // Properties
@@ -75,12 +81,21 @@ export class NotionDatabase implements IEntity, IAggregateRoot {
     return [...this._domainEvents];
   }
 
+  get createdAt(): Date {
+    return this._createdAt
+  }
+
+  get updatedAt(): Date {
+    return this._updatedAt
+  }
+
   // Methods
   addPage(page: NotionPage): void {
     if (!this._pages.some(p => p.id === page.id)) {
       this._pages.push(page);
     }
   }
+
 
   getPages(): NotionPage[] {
     return this.pages;
@@ -95,9 +110,13 @@ export class NotionDatabase implements IEntity, IAggregateRoot {
         databaseId: this.id,
         workspaceId: this.workspaceId,
         ownerId: this.ownerId,
-        occurredAt: syncTime,
+        occurredOn: syncTime,
       })
     );
+  }
+
+  addEvent(event: IDomainEvent): void {
+    this._domainEvents.push(event);
   }
 
   clearEvents(): void {

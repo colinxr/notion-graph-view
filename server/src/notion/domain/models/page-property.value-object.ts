@@ -65,7 +65,7 @@ export class PageProperty implements IValueObject<PageProperty> {
              this.name === other.name && 
              this.type === other.type && 
              this.value.length === other.value.length &&
-             this.value.every((v, i) => v === other.value[i]);
+             this.value.every((v, i) => v === (other.value as string[])[i]);
     }
     
     // For null values

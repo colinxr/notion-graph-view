@@ -6,6 +6,7 @@ export interface INotionPageRepository extends IRepository<NotionPage> {
   findByDatabaseId(databaseId: string): Promise<NotionPage[]>;
   findWithBacklinks(pageId: string): Promise<NotionPage | null>;
   findOutgoingBacklinks(pageId: string): Promise<NotionPage[]>;
+  findAll(): Promise<NotionPage[]>;
   save(page: NotionPage): Promise<void>;
   saveMany(pages: NotionPage[]): Promise<void>;
   delete(id: string): Promise<void>;

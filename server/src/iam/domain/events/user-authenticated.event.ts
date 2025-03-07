@@ -1,7 +1,7 @@
 import { IDomainEvent } from '../../../shared/kernel/interfaces/domain-event.interface';
 
 export class UserAuthenticatedEvent implements IDomainEvent {
-  readonly eventType = 'UserAuthenticated';
+  readonly eventName = 'UserAuthenticated';
 
   constructor(
     public readonly userId: string,

@@ -115,7 +115,7 @@ export class NotionPage implements IEntity {
       new PageUpdatedEvent({
         pageId: this.id,
         databaseId: this.databaseId,
-        occurredAt: props.updatedAt,
+        occurredOn: props.updatedAt,
       })
     );
   }

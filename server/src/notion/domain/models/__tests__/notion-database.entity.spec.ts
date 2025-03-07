@@ -14,6 +14,8 @@ describe('NotionDatabase', () => {
       workspaceId: 'ws123',
       ownerId: 'user123',
       lastSyncedAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
   });
 

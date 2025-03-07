@@ -4,7 +4,7 @@ export interface DatabaseImportedEventProps {
   databaseId: string;
   workspaceId: string;
   ownerId: string;
-  occurredAt: Date;
+  occurredOn: Date;
   pageCount?: number;
 }
 
@@ -13,14 +13,14 @@ export class DatabaseImportedEvent implements IDomainEvent {
   private readonly _databaseId: string;
   private readonly _workspaceId: string;
   private readonly _ownerId: string;
-  private readonly _occurredAt: Date;
+  private readonly _occurredOn: Date;
   private readonly _pageCount?: number;
 
   constructor(props: DatabaseImportedEventProps) {
     this._databaseId = props.databaseId;
     this._workspaceId = props.workspaceId;
     this._ownerId = props.ownerId;
-    this._occurredAt = props.occurredAt;
+    this._occurredOn = props.occurredOn;
     this._pageCount = props.pageCount;
   }
 
@@ -40,8 +40,8 @@ export class DatabaseImportedEvent implements IDomainEvent {
     return this._ownerId;
   }
 
-  get occurredAt(): Date {
-    return this._occurredAt;
+  get occurredOn(): Date {
+    return this._occurredOn;
   }
 
   get pageCount(): number | undefined {

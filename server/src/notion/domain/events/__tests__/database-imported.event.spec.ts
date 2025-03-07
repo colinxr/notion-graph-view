@@ -7,7 +7,7 @@ describe('DatabaseImportedEvent', () => {
       databaseId: 'db123',
       workspaceId: 'ws123',
       ownerId: 'user123',
-      occurredAt: new Date(),
+      occurredOn: new Date(),
     });
     
     expect(event).toBeDefined();
@@ -18,26 +18,26 @@ describe('DatabaseImportedEvent', () => {
       databaseId: 'db123',
       workspaceId: 'ws123',
       ownerId: 'user123',
-      occurredAt: new Date(),
+      occurredOn: new Date(),
     });
     
     expect(typeof event.eventName).toBe('string');
-    expect(event.occurredAt).toBeInstanceOf(Date);
+    expect(event.occurredOn).toBeInstanceOf(Date);
   });
 
   it('should have correct properties', () => {
-    const occurredAt = new Date();
+    const occurredOn = new Date();
     const event = new DatabaseImportedEvent({
       databaseId: 'db123',
       workspaceId: 'ws123',
       ownerId: 'user123',
-      occurredAt,
+      occurredOn,
     });
     
     expect(event.eventName).toBe('DatabaseImported');
     expect(event.databaseId).toBe('db123');
     expect(event.workspaceId).toBe('ws123');
     expect(event.ownerId).toBe('user123');
-    expect(event.occurredAt).toBe(occurredAt);
+    expect(event.occurredOn).toBe(occurredOn);
   });
 });
