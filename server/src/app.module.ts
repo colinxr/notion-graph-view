@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
-import { BullModule } from '@nestjs/bull';
+import { MongoDBModule } from './shared/infrastructure/persistence/mongodb/mongodb.module';
+import { RedisModule } from './shared/infrastructure/caching/redis/redis.module';
+import { LoggerService } from './shared/infrastructure/logging/logger.service';
 
 @Module({
   imports: [
@@ -10,18 +11,15 @@ import { BullModule } from '@nestjs/bull';
       isGlobal: true,
     }),
     
-    // Database
-    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/ddd-app'),
-    
-    // Queue
-    BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
-      },
-    }),
-    
-    // Domain Modules will be imported here
+    // Infrastructure
+    MongoDBModule,
+    RedisModule,
+  ],
+  providers: [
+    LoggerService,
+  ],
+  exports: [
+    LoggerService,
   ],
 })
 export class AppModule {} 
