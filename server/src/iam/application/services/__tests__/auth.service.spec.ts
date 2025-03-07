@@ -133,12 +133,19 @@ describe('AuthService', () => {
     it('should login user successfully', async () => {
       // Arrange
       const userWithToken = mockUser as User & {
-        authToken: { value: string; isMatch: jest.Mock<any, any, any> }
+        authToken: any;
       };
+      
       userWithToken.authToken = { 
-        value: 'hashed_password', 
-        isMatch: jest.fn().mockResolvedValue(true) 
+        token: 'hashed_password',
+        expiresAt: new Date(),
+        equals: jest.fn(),
+        isExpired: jest.fn().mockReturnValue(false),
+        getToken: jest.fn().mockReturnValue('hashed_password'),
+        getExpiresAt: jest.fn().mockReturnValue(new Date()),
+        isMatch: jest.fn().mockResolvedValue(true)
       };
+      
       mockUserRepository.findByEmail.mockResolvedValue(userWithToken);
       
       // Act
