@@ -31,7 +31,7 @@ export class EventBusService {
   }
 
   async publish(event: IDomainEvent): Promise<void> {
-    const eventName = event.eventType;
+    const eventName = event.eventName;
     const handlers = this.handlers.get(eventName) || [];
 
     this.logger.debug(`Publishing event ${eventName} to ${handlers.length} handlers`);
