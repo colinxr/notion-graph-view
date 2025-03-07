@@ -4,6 +4,7 @@ import { MongoDBModule } from './shared/infrastructure/persistence/mongodb/mongo
 import { RedisModule } from './shared/infrastructure/caching/redis/redis.module';
 import { LoggerService } from './shared/infrastructure/logging/logger.service';
 import { EventBusModule } from './shared/infrastructure/event-bus/event-bus.module';
+import { IAMModule } from './iam/iam.module';
 
 @Module({
   imports: [
@@ -16,6 +17,9 @@ import { EventBusModule } from './shared/infrastructure/event-bus/event-bus.modu
     MongoDBModule,
     RedisModule,
     EventBusModule,
+    
+    // Application Modules
+    IAMModule,
   ],
   providers: [
     LoggerService,
