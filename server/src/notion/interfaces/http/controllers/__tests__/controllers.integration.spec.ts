@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, NotFoundException } from '@nestjs/common';
+import { INestApplication, ValidationPipe, NotFoundException, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import * as request from 'supertest';
+import { Request, Response, NextFunction } from 'express';
 import { DatabaseController } from '../database.controller';
 import { PageController } from '../page.controller';
 import { DatabaseService } from '../../../../application/services/database.service';
@@ -13,8 +14,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthGuard } from '../../../../../iam/interfaces/http/guards/auth.guard';
 import { SubscriptionGuard } from '../../../../../iam/interfaces/http/guards/subscription.guard';
 import { UserDto } from '../../../../../iam/application/dtos/user.dto';
+import { User } from '../../../../../iam/interfaces/http/decorators/user.decorator';
 
-// Create mock Logger module to replace the actual module
+// Create mock Logger module
 const LoggerModule = {
   module: class {},
   providers: [
@@ -29,6 +31,24 @@ const LoggerModule = {
     },
   ],
 };
+
+// Create a user middleware that adds a mock user to every request
+class UserMiddleware implements NestModule {
+  private readonly mockUser: UserDto;
+
+  constructor(mockUser: UserDto) {
+    this.mockUser = mockUser;
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply((req: Request, res: Response, next: NextFunction) => {
+        (req as any).user = this.mockUser;
+        next();
+      })
+      .forRoutes('*');
+  }
+}
 
 describe('Notion Controllers (Integration)', () => {
   let app: INestApplication;
@@ -131,13 +151,7 @@ describe('Notion Controllers (Integration)', () => {
     const mockBacklinkExtractorService = {
       extractBacklinksForPage: jest.fn().mockResolvedValue(5),
     };
-
-    // Create a mock User decorator
-    const mockUserDecorator = {
-      provide: 'UserDecorator',
-      useValue: () => mockUser,
-    };
-
+    
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
@@ -158,7 +172,6 @@ describe('Notion Controllers (Integration)', () => {
           provide: BacklinkExtractorService,
           useValue: mockBacklinkExtractorService,
         },
-        mockUserDecorator,
       ],
     })
     .overrideGuard(AuthGuard)
@@ -169,6 +182,13 @@ describe('Notion Controllers (Integration)', () => {
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
+    
+    // Hook into the Express app to add the user to every request
+    // This is the key fix - add user to all requests via middleware
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      (req as any).user = mockUser;
+      next();
+    });
     
     databaseService = moduleFixture.get<DatabaseService>(DatabaseService);
     pageService = moduleFixture.get<PageService>(PageService);
@@ -260,10 +280,10 @@ describe('Notion Controllers (Integration)', () => {
       });
     });
 
-    describe('GET /notion/pages/:id/backlinks', () => {
+    describe('GET /notion/pages/:id/with-backlinks', () => {
       it('should return a page with its backlinks', () => {
         return request(app.getHttpServer())
-          .get('/notion/pages/page-123/backlinks')
+          .get('/notion/pages/page-123/with-backlinks')
           .expect(200)
           .expect((res) => {
             expect(res.body).toEqual(toJsonSafe(mockPage));

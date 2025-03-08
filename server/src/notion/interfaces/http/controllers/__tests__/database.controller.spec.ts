@@ -76,6 +76,8 @@ describe('DatabaseController', () => {
     it('should return all databases when no workspace ID is provided', async () => {
       // Act
       const result = await controller.getDatabases(mockUser);
+      console.log(result);
+      
 
       // Assert
       expect(databaseService.getAllDatabases).toHaveBeenCalled();
