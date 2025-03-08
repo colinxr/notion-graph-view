@@ -66,7 +66,7 @@ describe('NotionApiService', () => {
     it('should throw an error if API key is not defined', () => {
       jest.spyOn(configService, 'get').mockReturnValue(undefined);
       
-      expect(() => new NotionApiService(configService, rateLimiter)).toThrow('NOTION_API_KEY is not defined');
+      expect(() => new NotionApiService(configService, rateLimiter)).toThrow('NOTION_CLIENT_SECRET is not defined');
     });
   });
 
