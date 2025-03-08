@@ -20,7 +20,7 @@
     "paths": {
       "@shared/*": ["shared/*"],
       "@infrastructure/*": ["infrastructure/*"]
-    }
+    },
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
