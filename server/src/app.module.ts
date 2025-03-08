@@ -5,6 +5,8 @@ import { RedisModule } from './shared/infrastructure/caching/redis/redis.module'
 import { LoggerService } from './shared/infrastructure/logging/logger.service';
 import { EventBusModule } from './shared/infrastructure/event-bus/event-bus.module';
 import { IAMModule } from './iam/iam.module';
+import { NotionModule } from './notion/notion.module';
+import { DocsModule } from './docs/docs.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { IAMModule } from './iam/iam.module';
     
     // Application Modules
     IAMModule,
+    NotionModule,
+    DocsModule,
   ],
   providers: [
     LoggerService,

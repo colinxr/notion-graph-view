@@ -1,77 +1,191 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { INotionDatabaseRepository } from '../../../domain/repositories/notion-database.repository.interface';
-import { NotionDatabase } from '../../../domain/models/notion-database.entity';
-import { NotionDatabaseDocument } from './notion-database.schema';
+import { NotionDatabase as DomainDatabase } from '../../../domain/models/notion-database.entity';
+import { NotionDatabase } from '../../entities/database.entity';
+import { NotionDatabaseDto } from '../../../application/dtos/database.dto';
 
+/**
+ * Repository for Notion database operations
+ */
 @Injectable()
 export class NotionDatabaseRepository implements INotionDatabaseRepository {
+  private readonly logger = new Logger(NotionDatabaseRepository.name);
+
   constructor(
-    @InjectModel(NotionDatabaseDocument.name)
-    private readonly databaseModel: Model<NotionDatabaseDocument>,
+    @InjectModel(NotionDatabase.name) private readonly databaseModel: Model<NotionDatabase>,
   ) {}
 
-  async findById(id: string): Promise<NotionDatabase | null> {
-    const document = await this.databaseModel.findOne({ id }).exec();
-    if (!document) return null;
-    return this.mapToDomain(document);
+  /**
+   * Find all databases
+   */
+  async findAll(): Promise<DomainDatabase[]> {
+    try {
+      const databases = await this.databaseModel.find().exec();
+      return databases.map(db => this.toDomainModel(db));
+    } catch (error) {
+      this.logger.error(`Error finding all databases: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<NotionDatabase[]> {
-    const documents = await this.databaseModel.find({ workspaceId }).exec();
-    return documents.map(doc => this.mapToDomain(doc));
+  /**
+   * Find databases by workspace ID
+   * @param workspaceId The workspace ID
+   */
+  async findByWorkspaceId(workspaceId: string): Promise<DomainDatabase[]> {
+    try {
+      const databases = await this.databaseModel.find({ workspaceId }).exec();
+      return databases.map(db => this.toDomainModel(db));
+    } catch (error) {
+      this.logger.error(`Error finding databases by workspace ID: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
-  async findByOwnerId(ownerId: string): Promise<NotionDatabase[]> {
-    const documents = await this.databaseModel.find({ ownerId }).exec();
-    return documents.map(doc => this.mapToDomain(doc));
+  /**
+   * Find databases by owner ID
+   * @param ownerId The owner ID
+   */
+  async findByOwnerId(ownerId: string): Promise<DomainDatabase[]> {
+    try {
+      // Since we simplified our model, we need to adapt this query
+      const databases = await this.databaseModel.find({ userId: ownerId }).exec();
+      return databases.map(db => this.toDomainModel(db));
+    } catch (error) {
+      this.logger.error(`Error finding databases by owner ID: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
-  async findAll(): Promise<NotionDatabase[]> {
-    const documents = await this.databaseModel.find().exec();
-    return documents.map(doc => this.mapToDomain(doc));
+  /**
+   * Find a database by ID
+   * @param id The database ID
+   */
+  async findById(id: string): Promise<DomainDatabase | null> {
+    try {
+      const database = await this.databaseModel.findById(id).exec();
+      return database ? this.toDomainModel(database) : null;
+    } catch (error) {
+      this.logger.error(`Error finding database by ID: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
-  async save(database: NotionDatabase): Promise<void> {
-    const persistenceData = this.mapToPersistence(database);
-    await this.databaseModel.findOneAndUpdate(
-      { id: database.id },
-      { $set: persistenceData },
-      { upsert: true, new: true },
-    ).exec();
+  /**
+   * Find a database by Notion ID
+   * @param notionId The Notion ID
+   */
+  async findByNotionId(notionId: string): Promise<DomainDatabase | null> {
+    try {
+      const database = await this.databaseModel.findOne({ notionId }).exec();
+      return database ? this.toDomainModel(database) : null;
+    } catch (error) {
+      this.logger.error(`Error finding database by Notion ID: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
+  /**
+   * Save a database entity
+   * @param database The database entity to save
+   */
+  async save(database: DomainDatabase): Promise<void> {
+    try {
+      // Check if it exists
+      const existing = await this.databaseModel.findOne({ 
+        notionId: database.id 
+      }).exec();
+
+      if (existing) {
+        // Update existing
+        await this.databaseModel.updateOne(
+          { notionId: database.id },
+          {
+            title: database.title,
+            description: database.description,
+            url: database.url,
+            lastSyncedAt: database.lastSyncedAt,
+            updatedAt: new Date()
+          }
+        ).exec();
+      } else {
+        // Create new - use create instead of constructor
+        await this.databaseModel.create({
+          notionId: database.id,
+          title: database.title,
+          description: database.description,
+          url: database.url,
+          userId: database.ownerId,
+          lastSyncedAt: database.lastSyncedAt,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+    } catch (error) {
+      this.logger.error(`Error saving database: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a database
+   * @param id The database ID
+   */
   async delete(id: string): Promise<void> {
-    await this.databaseModel.findOneAndDelete({ id }).exec();
+    try {
+      await this.databaseModel.findByIdAndDelete(id).exec();
+    } catch (error) {
+      this.logger.error(`Error deleting database: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
-  // Mapper methods
-  private mapToDomain(document: NotionDatabaseDocument): NotionDatabase {
-    return new NotionDatabase({
-      id: document.id,
-      title: document.title,
-      workspaceId: document.workspaceId,
-      ownerId: document.ownerId,
-      lastSyncedAt: document.lastSyncedAt,
-      description: document.description,
-      url: document.url,
-      createdAt: document.createdAt,
-      updatedAt: document.updatedAt,
+  /**
+   * Convert a MongoDB database entity to a domain model
+   * @param entity The database entity
+   */
+  private toDomainModel(entity: NotionDatabase): DomainDatabase {
+    // Get dates from the MongoDB document or use defaults
+    const now = new Date();
+    const createdDate = now;
+    const updatedDate = now;
+
+    return new DomainDatabase({
+      id: entity.notionId,
+      title: entity.title,
+      workspaceId: entity.userId?.toString() || '',
+      ownerId: entity.userId?.toString() || '',
+      lastSyncedAt: new Date(),
+      description: entity.description,
+      url: entity.url,
+      createdAt: createdDate,
+      updatedAt: updatedDate
     });
   }
 
-  private mapToPersistence(entity: NotionDatabase): Partial<NotionDatabaseDocument> {
+  /**
+   * Convert a database entity to a DTO (for API responses)
+   * @param entity The database entity
+   */
+  private toDto(entity: NotionDatabase): NotionDatabaseDto {
+    // Get dates from the MongoDB document or use defaults
+    const now = new Date();
+    const createdDate = now;
+    const updatedDate = now;
+    
     return {
-      id: entity.id,
+      id: entity._id.toString(),
       title: entity.title,
-      workspaceId: entity.workspaceId,
-      ownerId: entity.ownerId,
-      lastSyncedAt: entity.lastSyncedAt,
+      workspaceId: entity.userId?.toString() || '',
+      ownerId: entity.userId?.toString() || '',
+      lastSyncedAt: new Date(),
       description: entity.description,
       url: entity.url,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
+      pageCount: 0, // Since we simplified the model
+      createdAt: createdDate,
+      updatedAt: updatedDate,
     };
   }
 } 
