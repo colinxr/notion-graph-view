@@ -41,8 +41,8 @@ import { SubscriptionGuard } from '../../../../iam/interfaces/http/guards/subscr
 @ApiExtraModels(PagePropertyDto, BacklinkDto)
 @Controller('notion/pages')
 @UseGuards(AuthGuard, SubscriptionGuard)
-export class PageController {
-  private readonly logger = new Logger(PageController.name);
+export class NotionPageController {
+  private readonly logger = new Logger(NotionPageController.name);
 
   constructor(
     private readonly pageService: PageService,

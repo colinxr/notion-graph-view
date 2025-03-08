@@ -5,7 +5,7 @@ import { HttpModule } from '@nestjs/axios';
 // Repositories and interfaces
 import { NotionDatabaseRepository } from '../persistence/mongodb/notion-database.repository';
 import { NotionPageRepository } from '../persistence/mongodb/notion-page.repository';
-import { BacklinkRepository } from '../persistence/mongodb/backlink.repository';
+import { BacklinkRepository } from '../persistence/mongodb/notion-backlink.repository';
 
 // Services
 import { NotionApiService } from '../api/notion-api.service';

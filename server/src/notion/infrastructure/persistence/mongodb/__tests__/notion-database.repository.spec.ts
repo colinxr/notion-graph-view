@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { NotionDatabaseRepository } from '../notion-database.repository';
-import { NotionDatabase as DbEntity } from '../../../../infrastructure/entities/database.entity';
+import { NotionDatabaseDocument as DbEntity } from '../notion-database.schema';
 import { NotionDatabase as DomainDatabase } from '../../../../domain/models/notion-database.entity';
 
 describe('NotionDatabaseRepository', () => {

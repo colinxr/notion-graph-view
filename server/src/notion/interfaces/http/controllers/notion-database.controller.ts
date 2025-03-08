@@ -37,8 +37,8 @@ import { UserDto } from '../../../../iam/application/dtos/user.dto';
 @ApiBearerAuth('JWT-auth')
 @Controller('notion/databases')
 @UseGuards(AuthGuard, SubscriptionGuard)
-export class DatabaseController {
-  private readonly logger = new Logger(DatabaseController.name);
+export class NotionDatabaseController {
+  private readonly logger = new Logger(NotionDatabaseController.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
 

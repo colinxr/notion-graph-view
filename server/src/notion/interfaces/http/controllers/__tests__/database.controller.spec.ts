@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DatabaseController } from '../database.controller';
+import { NotionDatabaseController } from '../notion-database.controller';
 import { DatabaseService } from '../../../../application/services/database.service';
 import { NotionDatabaseDto, DatabaseSyncResultDto } from '../../../../application/dtos/database.dto';
 import { NotFoundException } from '@nestjs/common';
@@ -7,8 +7,8 @@ import { UserDto } from '../../../../../iam/application/dtos/user.dto';
 import { AuthGuard } from '../../../../../iam/interfaces/http/guards/auth.guard';
 import { SubscriptionGuard } from '../../../../../iam/interfaces/http/guards/subscription.guard';
 
-describe('DatabaseController', () => {
-  let controller: DatabaseController;
+describe('NotionDatabaseController', () => {
+  let controller: NotionDatabaseController;
   let databaseService: jest.Mocked<DatabaseService>;
 
   // Mock data
@@ -50,7 +50,7 @@ describe('DatabaseController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [DatabaseController],
+      controllers: [NotionDatabaseController],
       providers: [
         {
           provide: DatabaseService,
@@ -64,7 +64,7 @@ describe('DatabaseController', () => {
     .useValue({ canActivate: () => true })
     .compile();
 
-    controller = module.get<DatabaseController>(DatabaseController);
+    controller = module.get<NotionDatabaseController>(NotionDatabaseController);
     databaseService = module.get(DatabaseService) as jest.Mocked<DatabaseService>;
   });
 

@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe, NotFoundException, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import * as request from 'supertest';
 import { Request, Response, NextFunction } from 'express';
-import { DatabaseController } from '../database.controller';
-import { PageController } from '../page.controller';
+import { NotionDatabaseController } from '../notion-database.controller';
+import { NotionPageController } from '../notion-page.controller';
 import { DatabaseService } from '../../../../application/services/database.service';
 import { PageService } from '../../../../application/services/page.service';
 import { BacklinkExtractorService } from '../../../../application/services/backlink-extractor.service';
@@ -158,7 +158,7 @@ describe('Notion Controllers (Integration)', () => {
           isGlobal: true,
         }),
       ],
-      controllers: [DatabaseController, PageController],
+      controllers: [NotionDatabaseController, NotionPageController],
       providers: [
         {
           provide: DatabaseService,

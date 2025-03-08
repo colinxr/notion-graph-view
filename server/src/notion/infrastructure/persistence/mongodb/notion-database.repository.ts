@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { INotionDatabaseRepository } from '../../../domain/repositories/notion-database.repository.interface';
 import { NotionDatabase as DomainDatabase } from '../../../domain/models/notion-database.entity';
-import { NotionDatabase } from '../../entities/database.entity';
+import { NotionDatabaseDocument } from './notion-database.schema';
 import { NotionDatabaseDto } from '../../../application/dtos/database.dto';
 
 /**
@@ -14,7 +14,7 @@ export class NotionDatabaseRepository implements INotionDatabaseRepository {
   private readonly logger = new Logger(NotionDatabaseRepository.name);
 
   constructor(
-    @InjectModel(NotionDatabase.name) private readonly databaseModel: Model<NotionDatabase>,
+    @InjectModel(NotionDatabaseDocument.name) private readonly databaseModel: Model<NotionDatabaseDocument>,
   ) {}
 
   /**
@@ -146,17 +146,17 @@ export class NotionDatabaseRepository implements INotionDatabaseRepository {
    * Convert a MongoDB database entity to a domain model
    * @param entity The database entity
    */
-  private toDomainModel(entity: NotionDatabase): DomainDatabase {
+  private toDomainModel(entity: NotionDatabaseDocument): DomainDatabase {
     // Get dates from the MongoDB document or use defaults
     const now = new Date();
     const createdDate = now;
     const updatedDate = now;
 
     return new DomainDatabase({
-      id: entity.notionId,
+      id: entity.id,
       title: entity.title,
-      workspaceId: entity.userId?.toString() || '',
-      ownerId: entity.userId?.toString() || '',
+      workspaceId: entity.ownerId?.toString() || '',
+      ownerId: entity.ownerId?.toString() || '',
       lastSyncedAt: new Date(),
       description: entity.description,
       url: entity.url,
@@ -169,7 +169,7 @@ export class NotionDatabaseRepository implements INotionDatabaseRepository {
    * Convert a database entity to a DTO (for API responses)
    * @param entity The database entity
    */
-  private toDto(entity: NotionDatabase): NotionDatabaseDto {
+  private toDto(entity: NotionDatabaseDocument): NotionDatabaseDto {
     // Get dates from the MongoDB document or use defaults
     const now = new Date();
     const createdDate = now;
@@ -178,8 +178,8 @@ export class NotionDatabaseRepository implements INotionDatabaseRepository {
     return {
       id: entity._id.toString(),
       title: entity.title,
-      workspaceId: entity.userId?.toString() || '',
-      ownerId: entity.userId?.toString() || '',
+      workspaceId: entity.ownerId?.toString() || '',
+      ownerId: entity.ownerId?.toString() || '',
       lastSyncedAt: new Date(),
       description: entity.description,
       url: entity.url,

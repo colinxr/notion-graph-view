@@ -50,6 +50,7 @@ import { EventBusModule } from '../shared/infrastructure/event-bus/event-bus.mod
     UserService,
     AuthGuard,
     SubscriptionGuard,
+    JwtModule,
   ],
 })
 export class IAMModule {} 

@@ -1,0 +1,1225 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "summary": "Register a new user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User already exists"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "summary": "Login with email and password",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/notion/connect": {
+      "post": {
+        "operationId": "AuthController_connectNotion",
+        "summary": "Connect Notion account",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotionAuthDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notion account connected successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User not authenticated or not found"
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "UserController_findAll",
+        "summary": "Get all users",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns list of all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "operationId": "UserController_getCurrentUser",
+        "summary": "Get current user profile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns current user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UserController_findById",
+        "summary": "Get user by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns user by ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/email/{email}": {
+      "get": {
+        "operationId": "UserController_findByEmail",
+        "summary": "Get user by email",
+        "parameters": [
+          {
+            "name": "email",
+            "required": true,
+            "in": "path",
+            "description": "User email",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns user by email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/notion-workspace/{workspaceId}": {
+      "get": {
+        "operationId": "UserController_findByNotionWorkspace",
+        "summary": "Get user by Notion workspace ID",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "description": "Notion workspace ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns user by Notion workspace ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/notion/databases": {
+      "get": {
+        "operationId": "NotionDatabaseController_getDatabases",
+        "summary": "Get all databases for the authenticated user",
+        "description": "Returns a list of Notion databases the user has access to. Can be filtered by workspace ID.",
+        "parameters": [
+          {
+            "name": "workspace",
+            "required": false,
+            "in": "query",
+            "description": "Filter databases by workspace ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of databases returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotionDatabaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          }
+        },
+        "tags": [
+          "notion-databases"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/notion/databases/{id}": {
+      "get": {
+        "operationId": "NotionDatabaseController_getDatabase",
+        "summary": "Get a specific database by ID",
+        "description": "Returns detailed information about a single Notion database.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the database to retrieve",
+            "schema": {
+              "example": "db_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Database returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotionDatabaseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          },
+          "404": {
+            "description": "Database not found"
+          }
+        },
+        "tags": [
+          "notion-databases"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/notion/databases/{id}/sync": {
+      "post": {
+        "operationId": "NotionDatabaseController_syncDatabase",
+        "summary": "Sync a database with Notion",
+        "description": "Updates the local copy of the database with the latest data from Notion.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the database to sync",
+            "schema": {
+              "example": "db_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Database sync initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseSyncResultDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          },
+          "404": {
+            "description": "Database not found"
+          }
+        },
+        "tags": [
+          "notion-databases"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/notion/pages": {
+      "get": {
+        "operationId": "NotionPageController_getPages",
+        "summary": "Get pages filtered by database ID",
+        "description": "Returns a list of Notion pages. Can be filtered by database ID.",
+        "parameters": [
+          {
+            "name": "database",
+            "required": false,
+            "in": "query",
+            "description": "Filter pages by database ID",
+            "schema": {
+              "example": "db_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of pages returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotionPageDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          }
+        },
+        "tags": [
+          "notion-pages"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/notion/pages/{id}": {
+      "get": {
+        "operationId": "NotionPageController_getPage",
+        "summary": "Get a specific page by ID",
+        "description": "Returns detailed information about a single Notion page.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the page to retrieve",
+            "schema": {
+              "example": "page_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotionPageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          },
+          "404": {
+            "description": "Page not found"
+          }
+        },
+        "tags": [
+          "notion-pages"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/notion/pages/{id}/with-backlinks": {
+      "get": {
+        "operationId": "NotionPageController_getPageWithBacklinks",
+        "summary": "Get a page with its backlinks",
+        "description": "Returns a page along with all backlinks referencing it from other pages.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the page to retrieve with backlinks",
+            "schema": {
+              "example": "page_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page with backlinks returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotionPageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          },
+          "404": {
+            "description": "Page not found"
+          }
+        },
+        "tags": [
+          "notion-pages"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/notion/pages/{id}/outgoing-backlinks": {
+      "get": {
+        "operationId": "NotionPageController_getOutgoingBacklinks",
+        "summary": "Get pages that are linked from this page",
+        "description": "Returns a list of pages that the specified page links to.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the source page",
+            "schema": {
+              "example": "page_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Outgoing backlinks returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotionPageDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          }
+        },
+        "tags": [
+          "notion-pages"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/notion/pages/{id}/sync": {
+      "post": {
+        "operationId": "NotionPageController_syncPage",
+        "summary": "Sync a page with Notion",
+        "description": "Updates the local copy of the page with the latest data from Notion.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the page to sync",
+            "schema": {
+              "example": "page_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page sync completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageSyncResultDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          },
+          "404": {
+            "description": "Page not found"
+          }
+        },
+        "tags": [
+          "notion-pages"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/notion/pages/{id}/extract-backlinks": {
+      "post": {
+        "operationId": "NotionPageController_extractBacklinks",
+        "summary": "Extract backlinks for a specific page",
+        "description": "Extracts backlinks from the page content and returns the count of found links.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the page to extract backlinks for",
+            "schema": {
+              "example": "page_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Backlinks extracted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "pageId": {
+                      "type": "string",
+                      "description": "ID of the page processed",
+                      "example": "page_123456789"
+                    },
+                    "backlinkCount": {
+                      "type": "number",
+                      "description": "Number of backlinks found",
+                      "example": 5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Not authorized (subscription required)"
+          },
+          "404": {
+            "description": "Page not found"
+          }
+        },
+        "tags": [
+          "notion-pages"
+        ],
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Notion Graph View API",
+    "description": "API Documentation for the Notion Graph View application",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "notion-databases",
+      "description": "Operations related to Notion databases"
+    },
+    {
+      "name": "notion-pages",
+      "description": "Operations related to Notion pages and their backlinks"
+    },
+    {
+      "name": "authentication",
+      "description": "Authentication and authorization operations"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "JWT-auth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "Enter JWT token"
+      }
+    },
+    "schemas": {
+      "RegisterUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "minLength": 8
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "password"
+        ]
+      },
+      "AuthTokenResponseDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "jwt_token_here"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-03-07T12:00:00Z"
+          }
+        },
+        "required": [
+          "token",
+          "expiresAt"
+        ]
+      },
+      "AuthResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "token": {
+            "$ref": "#/components/schemas/AuthTokenResponseDto"
+          },
+          "hasNotionAccess": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name",
+          "token",
+          "hasNotionAccess"
+        ]
+      },
+      "LoginUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "NotionAuthDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "notion_access_token"
+          },
+          "workspaceId": {
+            "type": "string",
+            "example": "workspace_id"
+          }
+        },
+        "required": [
+          "accessToken",
+          "workspaceId"
+        ]
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "isAuthenticated": {
+            "type": "boolean",
+            "example": true
+          },
+          "hasNotionAccess": {
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-03-07T12:00:00Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-03-07T12:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name",
+          "isAuthenticated",
+          "hasNotionAccess",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UserListDto": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 10
+          }
+        },
+        "required": [
+          "users",
+          "total"
+        ]
+      },
+      "NotionDatabaseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the database",
+            "example": "db_123456789"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the database",
+            "example": "Project Tasks"
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "ID of the workspace that contains the database",
+            "example": "ws_123456789"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "ID of the database owner",
+            "example": "user_123456789"
+          },
+          "lastSyncedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp of the last synchronization with Notion",
+            "example": "2023-01-15T12:30:45.123Z"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of the database",
+            "example": "This database contains all project tasks"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL to the database in Notion",
+            "example": "https://notion.so/workspace/db-123456789"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the database was created",
+            "example": "2023-01-01T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the database was last updated",
+            "example": "2023-01-15T12:30:45.123Z"
+          },
+          "pageCount": {
+            "type": "number",
+            "description": "Number of pages in the database",
+            "example": 42
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "workspaceId",
+          "ownerId",
+          "lastSyncedAt",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "DatabaseSyncResultDto": {
+        "type": "object",
+        "properties": {
+          "databaseId": {
+            "type": "string",
+            "description": "ID of the database that was synced",
+            "example": "db_123456789"
+          },
+          "newPages": {
+            "type": "number",
+            "description": "Number of new pages created during sync",
+            "example": 5
+          },
+          "updatedPages": {
+            "type": "number",
+            "description": "Number of existing pages updated during sync",
+            "example": 10
+          },
+          "totalPages": {
+            "type": "number",
+            "description": "Total number of pages in the database",
+            "example": 42
+          },
+          "syncedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the sync was completed",
+            "example": "2023-01-15T12:30:45.123Z"
+          }
+        },
+        "required": [
+          "databaseId",
+          "newPages",
+          "updatedPages",
+          "totalPages",
+          "syncedAt"
+        ]
+      },
+      "PagePropertyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the page property",
+            "example": "prop_123456789"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the property",
+            "example": "Status"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the property (e.g., select, date, text)",
+            "example": "select"
+          },
+          "value": {
+            "type": "object",
+            "description": "Value of the property, can be of different types",
+            "example": "In Progress"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "value"
+        ]
+      },
+      "BacklinkDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the backlink",
+            "example": "bl_123456789"
+          },
+          "sourcePageId": {
+            "type": "string",
+            "description": "ID of the source page that contains the backlink",
+            "example": "page_abcdef123"
+          },
+          "sourcePageTitle": {
+            "type": "string",
+            "description": "Title of the source page",
+            "example": "Meeting Notes"
+          },
+          "targetPageId": {
+            "type": "string",
+            "description": "ID of the target page that is being linked to",
+            "example": "page_xyz789"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the backlink was created",
+            "example": "2023-01-15T12:30:45.123Z"
+          },
+          "context": {
+            "type": "string",
+            "description": "Surrounding text context of the backlink",
+            "example": "As discussed in [[Project Plan]], we need to..."
+          }
+        },
+        "required": [
+          "id",
+          "sourcePageId",
+          "sourcePageTitle",
+          "targetPageId",
+          "createdAt"
+        ]
+      },
+      "NotionPageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the page",
+            "example": "page_123456789"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the page",
+            "example": "Project Kickoff"
+          },
+          "databaseId": {
+            "type": "string",
+            "description": "ID of the database that contains this page",
+            "example": "db_123456789"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL to the page in Notion",
+            "example": "https://notion.so/workspace/page-123456789"
+          },
+          "content": {
+            "type": "string",
+            "description": "Markdown content of the page",
+            "example": "# Project Kickoff\nThis is the kickoff meeting for our new project..."
+          },
+          "properties": {
+            "description": "List of properties for the page",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PagePropertyDto"
+            }
+          },
+          "backlinks": {
+            "description": "List of backlinks referencing this page",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BacklinkDto"
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the page was created",
+            "example": "2023-01-01T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the page was last updated",
+            "example": "2023-01-15T12:30:45.123Z"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "databaseId",
+          "url",
+          "properties",
+          "backlinks",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PageSyncResultDto": {
+        "type": "object",
+        "properties": {
+          "pageId": {
+            "type": "string",
+            "description": "ID of the page that was synced",
+            "example": "page_123456789"
+          },
+          "databaseId": {
+            "type": "string",
+            "description": "ID of the database containing the page",
+            "example": "db_123456789"
+          },
+          "backlinkCount": {
+            "type": "number",
+            "description": "Number of backlinks found and extracted",
+            "example": 3
+          },
+          "contentUpdated": {
+            "type": "boolean",
+            "description": "Whether the page content was updated during sync",
+            "example": true
+          },
+          "propertiesUpdated": {
+            "type": "boolean",
+            "description": "Whether any page properties were updated during sync",
+            "example": false
+          },
+          "syncedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the sync was completed",
+            "example": "2023-01-15T12:30:45.123Z"
+          }
+        },
+        "required": [
+          "pageId",
+          "databaseId",
+          "backlinkCount",
+          "contentUpdated",
+          "propertiesUpdated",
+          "syncedAt"
+        ]
+      }
+    }
+  }
+}

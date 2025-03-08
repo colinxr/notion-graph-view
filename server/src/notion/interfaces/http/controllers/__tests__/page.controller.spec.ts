@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PageController } from '../page.controller';
+import { NotionPageController } from '../notion-page.controller';
 import { PageService } from '../../../../application/services/page.service';
 import { BacklinkExtractorService } from '../../../../application/services/backlink-extractor.service';
 import { NotionPageDto, PageSyncResultDto } from '../../../../application/dtos/page.dto';
@@ -8,8 +8,8 @@ import { BacklinkDto } from '../../../../application/dtos/backlink.dto';
 import { AuthGuard } from '../../../../../iam/interfaces/http/guards/auth.guard';
 import { SubscriptionGuard } from '../../../../../iam/interfaces/http/guards/subscription.guard';
 
-describe('PageController', () => {
-  let controller: PageController;
+describe('NotionPageController', () => {
+  let controller: NotionPageController;
   let pageService: jest.Mocked<PageService>;
   let backlinkExtractorService: jest.Mocked<BacklinkExtractorService>;
 
@@ -61,7 +61,7 @@ describe('PageController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [PageController],
+      controllers: [NotionPageController],
       providers: [
         {
           provide: PageService,
@@ -79,7 +79,7 @@ describe('PageController', () => {
     .useValue({ canActivate: () => true })
     .compile();
 
-    controller = module.get<PageController>(PageController);
+    controller = module.get<NotionPageController>(NotionPageController);
     pageService = module.get(PageService) as jest.Mocked<PageService>;
     backlinkExtractorService = module.get(BacklinkExtractorService) as jest.Mocked<BacklinkExtractorService>;
   });

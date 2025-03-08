@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Backlink } from '../../entities/backlink.entity';
+import { BacklinkDocument } from './notion-page.schema'
 import { BacklinkDto } from '../../../application/dtos/backlink.dto';
 
 /**
@@ -12,7 +12,7 @@ export class BacklinkRepository {
   private readonly logger = new Logger(BacklinkRepository.name);
   
   constructor(
-    @InjectModel(Backlink.name) private readonly backlinkModel: Model<Backlink>,
+    @InjectModel(BacklinkDocument.name) private readonly backlinkModel: Model<BacklinkDocument>,
   ) {}
 
   /**
@@ -82,9 +82,9 @@ export class BacklinkRepository {
   /**
    * Convert a Backlink entity to a BacklinkDto
    */
-  private toDto(entity: Backlink): BacklinkDto {
+  private toDto(entity: BacklinkDocument): BacklinkDto {
     return {
-      id: entity._id.toString(),
+      id: entity.id.toString(),
       sourcePageId: entity.sourcePageId,
       sourcePageTitle: entity.sourcePageTitle,
       targetPageId: entity.targetPageId,
