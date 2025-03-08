@@ -10,7 +10,6 @@ class MockBacklinkExtractorService {}
 class MockInfrastructureModule {}
 
 describe('NotionApplicationModule', () => {
-  // We'll use a different approach - provide mocks directly to the test module
   it('should compile and provide services', async () => {
     // Mock the import
     jest.mock('../notion-application.module', () => ({
