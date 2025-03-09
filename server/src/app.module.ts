@@ -6,6 +6,7 @@ import { LoggerService } from './shared/infrastructure/logging/logger.service';
 import { EventBusModule } from './shared/infrastructure/event-bus/event-bus.module';
 import { IAMModule } from './iam/iam.module';
 import { NotionModule } from './notion/notion.module';
+import { GraphModule } from './graph/graph.module';
 import { DocsModule } from './docs/docs.module';
 
 @Module({
@@ -23,6 +24,7 @@ import { DocsModule } from './docs/docs.module';
     // Application Modules
     IAMModule,
     NotionModule,
+    GraphModule,
     DocsModule,
   ],
   providers: [
