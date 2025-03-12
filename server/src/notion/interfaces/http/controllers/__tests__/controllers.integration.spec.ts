@@ -14,7 +14,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthGuard } from '../../../../../iam/interfaces/http/guards/auth.guard';
 import { SubscriptionGuard } from '../../../../../iam/interfaces/http/guards/subscription.guard';
 import { UserDto } from '../../../../../iam/application/dtos/user.dto';
-import { User } from '../../../../../iam/interfaces/http/decorators/user.decorator';
 
 // Create mock Logger module
 const LoggerModule = {

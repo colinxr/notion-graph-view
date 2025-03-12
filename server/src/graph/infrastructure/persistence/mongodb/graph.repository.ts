@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IGraphRepository } from '../../../domain/repositories/graph.repository.interface';
-import { Graph, GraphData } from '../../../domain/models/graph.entity';
+import { Graph, GraphData, } from '../../../domain/models/graph.entity';
 import { GraphDocument } from './graph.schema';
 import { GraphMapper } from './graph.mapper';
 

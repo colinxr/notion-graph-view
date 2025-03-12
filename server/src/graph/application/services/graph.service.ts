@@ -35,7 +35,11 @@ export class GraphService {
 
     // Create the graph without nodes and edges first
     const { nodes: nodeData, edges: edgeData, ...graphWithoutNodesAndEdges } = graphData;
+    console.log(graphWithoutNodesAndEdges);
+    
     const graph = new Graph(graphWithoutNodesAndEdges);
+    console.log(graph);
+    
 
     // Add nodes if provided
     if (nodeData && nodeData.length > 0) {

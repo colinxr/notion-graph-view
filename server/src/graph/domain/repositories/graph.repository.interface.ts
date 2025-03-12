@@ -10,7 +10,7 @@ export interface IGraphRepository {
    * @returns Promise resolving to the graph or null if not found
    */
   findById(id: string): Promise<Graph | null>;
-
+  
   /**
    * Find graphs owned by a user
    * @param ownerId User ID of the owner

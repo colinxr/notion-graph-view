@@ -17,8 +17,8 @@ interface INotionDatabaseRepository {
   findById(databaseId: string, userId: string): Promise<any>;
 }
 
-interface BacklinkService {
-  extractBacklinks(pageId: string, userId: string): Promise<any[]>;
+interface BacklinkExtractorService {
+  extractBacklinksForPage(pageId: string, userId: string): Promise<any[]>;
 }
 
 @Injectable()
@@ -33,7 +33,8 @@ export class GraphGeneratorService {
     @Inject('INotionDatabaseRepository')
     private readonly notionDatabaseRepository: INotionDatabaseRepository,
     
-    private readonly backlinkService: BacklinkService,
+    @Inject('BacklinkExtractorService')
+    private readonly backlinkService: BacklinkExtractorService,
   ) {}
 
   /**
@@ -183,7 +184,7 @@ export class GraphGeneratorService {
     if (depth <= 0) return;
     
     // Get backlinks for this page
-    const backlinks = await this.backlinkService.extractBacklinks(pageId, userId);
+    const backlinks = await this.backlinkService.extractBacklinksForPage(pageId, userId);
     
     for (const backlink of backlinks) {
       const sourcePage = backlink.sourcePage;
