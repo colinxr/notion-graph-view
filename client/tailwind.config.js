@@ -5,6 +5,7 @@ module.exports = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/styles/**/*.css",
   ],
   theme: {
     container: {
@@ -71,5 +72,29 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ addUtilities, theme }) {
+      const newUtilities = {
+        ".border-border": {
+          borderColor: theme("colors.border"),
+        },
+        ".outline-ring\\/50": {
+          outlineColor: `color-mix(in srgb, ${theme(
+            "colors.ring"
+          )} 50%, transparent)`,
+        },
+        ".bg-background": {
+          backgroundColor: theme("colors.background"),
+        },
+        ".text-foreground": {
+          color: theme("colors.foreground"),
+        },
+      }
+      addUtilities(newUtilities)
+    },
+  ],
+  experimental: {
+    applyRuleGenerationMode: "build-time",
+  },
 }

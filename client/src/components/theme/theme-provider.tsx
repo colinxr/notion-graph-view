@@ -2,14 +2,18 @@
 
 import * as React from 'react';
 import { ThemeProvider as NextThemeProvider } from 'next-themes';
-import { type ThemeProviderProps } from 'next-themes/dist/types';
 import { themes } from '@/lib/themes';
 
 /**
- * Provider component that wraps the application with theme context
- * Uses next-themes to handle theme switching
+ * Theme provider component for the application.
+ * Uses next-themes to manage theme switching between light and dark modes.
  */
-export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+export function ThemeProvider({
+  children,
+  ...props
+}: {
+  children: React.ReactNode;
+} & React.ComponentPropsWithoutRef<typeof NextThemeProvider>) {
   return (
     <NextThemeProvider
       attribute="class"
