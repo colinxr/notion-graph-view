@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -54,12 +54,12 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full">
-            Sign In
+            Sign Up
           </Button>
           <div className="text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/auth/register" className="text-blue-600 hover:underline">
-              Sign Up
+            Already have an account?{' '}
+            <Link href="/login" className="text-blue-600 hover:underline">
+              Log In
             </Link>
           </div>
         </CardFooter>
