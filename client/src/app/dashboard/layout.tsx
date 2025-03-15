@@ -10,7 +10,6 @@ import {
   BarChart2,
   Menu,
   ChevronDown,
-  LogOut,
   User,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { SignOutButton } from '@clerk/nextjs';
 export default function DashboardLayout({
   children,
 }: {
@@ -240,8 +240,7 @@ export default function DashboardLayout({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <SignOutButton />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

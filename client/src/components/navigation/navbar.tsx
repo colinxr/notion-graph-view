@@ -6,6 +6,7 @@ import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { cn } from '@/lib/utils';
 import { mainNavItems } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
+import { SignInButton, SignUpButton } from '@clerk/nextjs';
 
 interface NavbarProps {
   className?: string;
@@ -43,16 +44,12 @@ export function Navbar({ className }: NavbarProps) {
         <div className="flex items-center gap-4">
           <nav className="flex items-center gap-2">
             <ThemeToggle />
-            <Link href="/sign-in">
-              <Button variant="outline" size="sm">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/sign-up">
-              <Button size="sm">
-                Get Started
-              </Button>
-            </Link>
+              <SignInButton />
+            <Button size="sm">
+            </Button>
+              <SignUpButton />
+            <Button size="sm">
+            </Button>
           </nav>
         </div>
       </div>
