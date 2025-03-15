@@ -1,69 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { SignUp } from '@clerk/nextjs';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login attempt with:', { email, password });
-    // Add authentication logic here
-  };
-
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-2xl">Sign In</CardTitle>
-        <CardDescription>
-          Enter your email and password to access your account
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
-              Email
-            </label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium">
-              Password
-            </label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <Button type="submit" className="w-full">
-            Sign Up
-          </Button>
-          <div className="text-center text-sm">
-            Already have an account?{' '}
-            <Link href="/login" className="text-blue-600 hover:underline">
-              Log In
-            </Link>
-          </div>
-        </CardFooter>
-      </form>
+      <CardContent className="p-0">
+        <SignUp routing="hash" />
+      </CardContent>
     </Card>
   );
-} 
+}

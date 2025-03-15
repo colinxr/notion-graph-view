@@ -18,6 +18,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           formButtonPrimary:
             'bg-primary hover:bg-primary/90 text-white rounded-md px-4 py-2',
           card: 'bg-background border-border shadow-md',
+          footerActionLink: 'text-primary hover:text-primary/90',
+          identityPreview: 'bg-background border-border',
         },
       }}
     >
