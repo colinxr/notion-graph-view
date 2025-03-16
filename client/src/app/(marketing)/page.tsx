@@ -25,19 +25,19 @@ export default function HomePage() {
       <section className="py-12 md:py-24 lg:py-32 bg-muted/40">
         <div className="container">
           <div className="grid gap-6 lg:grid-cols-3">
-            <div className="rounded-lg border bg-card p-6 shadow-sm">
+            <div className="rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
               <h3 className="text-xl font-semibold">Connect with Notion</h3>
               <p className="text-muted-foreground mt-2">
                 Seamlessly connect to your Notion workspace and select the databases to visualize.
               </p>
             </div>
-            <div className="rounded-lg border bg-card p-6 shadow-sm">
+            <div className="rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
               <h3 className="text-xl font-semibold">Visualize Relationships</h3>
               <p className="text-muted-foreground mt-2">
                 See how your Notion pages connect to each other in an interactive graph visualization.
               </p>
             </div>
-            <div className="rounded-lg border bg-card p-6 shadow-sm">
+            <div className="rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
               <h3 className="text-xl font-semibold">Embed Anywhere</h3>
               <p className="text-muted-foreground mt-2">
                 Embed your graph visualizations directly into your Notion pages for easy reference.
