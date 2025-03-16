@@ -17,7 +17,7 @@ export function Navbar({ className }: NavbarProps) {
 
   return (
     <header className={cn('sticky top-0 z-40 w-full border-b bg-background', className)}>
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container mx-auto flex h-16 items-center justify-between">
         <div className="flex gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
             <span className="hidden font-bold sm:inline-block text-xl">
@@ -43,13 +43,9 @@ export function Navbar({ className }: NavbarProps) {
         </div>
         <div className="flex items-center gap-4">
           <nav className="flex items-center gap-2">
+            <SignInButton />
+            <SignUpButton />
             <ThemeToggle />
-              <SignInButton />
-            <Button size="sm">
-            </Button>
-              <SignUpButton />
-            <Button size="sm">
-            </Button>
           </nav>
         </div>
       </div>

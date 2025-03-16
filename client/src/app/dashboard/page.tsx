@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useGraphs } from '@/hooks/use-graph-data';
 import { useDatabases } from '@/hooks/use-databases';
-import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -13,7 +12,6 @@ export default function DashboardPage() {
   const { data: databases, isLoading: databasesLoading, error: databasesError } = useDatabases();
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -80,6 +78,5 @@ export default function DashboardPage() {
           </div>
         </Card>
       </div>
-    </DashboardLayout>
   );
 } 
