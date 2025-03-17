@@ -13,10 +13,14 @@ import { UserService } from './application/services/user.service';
 // Guards
 import { AuthGuard } from './interfaces/http/guards/auth.guard';
 import { SubscriptionGuard } from './interfaces/http/guards/subscription.guard';
+import { ClerkAuthGuard } from './interfaces/http/guards/clerk-auth.guard';
 
 // Infrastructure
 import { IAMMongoModule } from './infrastructure/persistence/mongodb/mongo.module';
 import { EventBusModule } from '../shared/infrastructure/event-bus/event-bus.module';
+
+// Clerk
+import { ClerkService } from './infrastructure/clerk/clerk.service';
 
 @Module({
   imports: [
@@ -40,16 +44,20 @@ import { EventBusModule } from '../shared/infrastructure/event-bus/event-bus.mod
     // Services
     AuthService,
     UserService,
+    ClerkService,
     
     // Guards
     AuthGuard,
     SubscriptionGuard,
+    ClerkAuthGuard,
   ],
   exports: [
     AuthService,
     UserService,
+    ClerkService,
     AuthGuard,
     SubscriptionGuard,
+    ClerkAuthGuard,
     JwtModule,
   ],
 })
