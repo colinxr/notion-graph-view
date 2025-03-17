@@ -7,8 +7,10 @@ import { DatabaseCacheService } from './application/services/database-cache.serv
 import { NotionApiService } from './infrastructure/api/notion-api.service';
 import { RateLimiterService } from './infrastructure/api/rate-limiter.service';
 import { DatabaseCacheHandler } from './application/handlers/database-cache.handler';
+import { BacklinkExtractorService } from './application/services/backlink-extractor.service';
 import { RedisModule } from '../shared/infrastructure/caching/redis/redis.module';
 import { EventBusModule } from '../shared/infrastructure/event-bus/event-bus.module';
+import { IAMModule } from '../iam/iam.module';
 
 // Database schemas
 import { NotionDatabaseDocument, NotionDatabaseSchema } from './infrastructure/persistence/mongodb/notion-database.schema';
@@ -31,7 +33,8 @@ import { NotionPageRepository } from './infrastructure/persistence/mongodb/notio
     ]),
     ConfigModule,
     RedisModule,
-    EventBusModule
+    EventBusModule,
+    IAMModule
   ],
   controllers: [NotionDatabaseController],
   providers: [
@@ -40,6 +43,7 @@ import { NotionPageRepository } from './infrastructure/persistence/mongodb/notio
     DatabaseCacheService,
     NotionApiService,
     RateLimiterService,
+    BacklinkExtractorService,
     
     // Event handlers
     DatabaseCacheHandler,
@@ -53,11 +57,18 @@ import { NotionPageRepository } from './infrastructure/persistence/mongodb/notio
       provide: 'INotionPageRepository',
       useClass: NotionPageRepository,
     },
+    {
+      provide: 'BacklinkExtractorService',
+      useClass: BacklinkExtractorService,
+    },
   ],
   exports: [
     NotionApiService,
     DatabaseService,
     DatabaseCacheService,
+    'INotionDatabaseRepository',
+    'INotionPageRepository',
+    'BacklinkExtractorService',
   ],
 })
 export class NotionModule {} 

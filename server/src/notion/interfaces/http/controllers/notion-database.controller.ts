@@ -47,7 +47,7 @@ interface RequestWithAuth extends Request {
  */
 @ApiTags('notion-databases')
 @ApiCookieAuth('__session') // Clerk session cookie
-@Controller('notion/databases')
+@Controller('api/v1/notion/databases')
 @UseGuards(ClerkAuthGuard)
 export class NotionDatabaseController {
   private readonly logger = new Logger(NotionDatabaseController.name);

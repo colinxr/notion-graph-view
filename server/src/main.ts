@@ -64,7 +64,7 @@ async function bootstrap() {
 
   // Enable CORS with credentials for Clerk cookies
   app.enableCors({
-    origin: process.env.APP_URL || 'http://localhost:3000',
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
     credentials: true,
   });
 

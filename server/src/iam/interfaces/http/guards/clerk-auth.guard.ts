@@ -20,7 +20,11 @@ export class ClerkAuthGuard implements CanActivate {
     
     try {
       // Validate the request using Clerk
+      console.log('got here');
+      
       const sessionContext = await this.clerkService.validateRequest(request);
+      
+      console.log('sessionContext', sessionContext);
       
       // Add the user context to the request for use in controllers
       request.auth = {
@@ -31,7 +35,11 @@ export class ClerkAuthGuard implements CanActivate {
       
       return true;
     } catch (error) {
+      console.error('Clerk authentication error:', error.message, error.stack);
+      
       if (error instanceof UnauthorizedException) {
+        console.log(error);
+        
         throw error;
       }
       throw new UnauthorizedException('Invalid authentication');
