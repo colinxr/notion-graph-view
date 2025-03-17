@@ -22,7 +22,6 @@ import { DatabaseCacheService } from '../../../application/services/database-cac
 import { NotionApiService } from '../../../infrastructure/api/notion-api.service';
 import { NotionDatabaseDto, DatabaseSyncResultDto } from '../../../application/dtos/database.dto';
 import { CachedDatabasesListDto } from '../../../application/dtos/database-cache.dto';
-import { ClerkAuthGuard } from '../../../../iam/interfaces/http/guards/clerk-auth.guard';
 import { SubscriptionGuard } from '../../../../iam/interfaces/http/guards/subscription.guard';
 import { Request } from 'express';
 import { EventBusService } from '../../../../shared/infrastructure/event-bus/event-bus.service';
@@ -48,7 +47,6 @@ interface RequestWithAuth extends Request {
 @ApiTags('notion-databases')
 @ApiCookieAuth('__session') // Clerk session cookie
 @Controller('api/v1/notion/databases')
-@UseGuards(ClerkAuthGuard)
 export class NotionDatabaseController {
   private readonly logger = new Logger(NotionDatabaseController.name);
 
@@ -83,8 +81,12 @@ export class NotionDatabaseController {
   })
   async getDatabases(@Req() request: RequestWithAuth): Promise<NotionDatabaseDto[]> {
     // Extract user ID and access token from Clerk auth
+    console.log(request.auth);
+    
     const userId = request.auth.userId;
     const notionAccessToken = request.auth.notionAccessToken;
+    console.log(request.auth);
+    
     
     this.logger.log(`Getting databases for user ${userId}`);
     

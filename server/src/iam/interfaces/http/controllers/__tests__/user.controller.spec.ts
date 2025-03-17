@@ -5,21 +5,11 @@ import { UserService } from '../../../../application/services/user.service';
 import { UserDto, UserListDto } from '../../../../application/dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { ClerkAuthGuard } from '../../guards/clerk-auth.guard';
-import { ClerkService } from '../../../../infrastructure/clerk/clerk.service';
 import { ClerkAuthUser } from '../../../../application/dtos/clerk-session.dto';
-
-// Create a mock AuthGuard
-class MockClerkAuthGuard {
-  canActivate() {
-    return true;
-  }
-}
 
 describe('UserController', () => {
   let controller: UserController;
   let userService: jest.Mocked<UserService>;
-  let clerkService: jest.Mocked<ClerkService>;
 
   // Sample data
   const mockUser: UserDto = {
@@ -37,10 +27,12 @@ describe('UserController', () => {
     total: 2,
   };
 
-  const mockClerkUser: ClerkAuthUser = {
-    id: 'clerk_test_id',
-    email: 'clerk_test@example.com',
-    notionConnected: true,
+  const mockRequest = {
+    auth: {
+      userId: 'clerk_test_id',
+      sessionId: 'test_session_id',
+      notionAccessToken: 'test_notion_token',
+    }
   };
 
   beforeEach(async () => {
@@ -52,13 +44,6 @@ describe('UserController', () => {
       findByNotionWorkspace: jest.fn(),
     };
 
-    // Mock ClerkService
-    const mockClerkService = {
-      validateRequest: jest.fn(),
-      getUserInfo: jest.fn(),
-      updateNotionAccessToken: jest.fn(),
-    };
-
     // Mock implementations for JwtService and ConfigService
     const mockJwtService = {
       signAsync: jest.fn(),
@@ -68,8 +53,6 @@ describe('UserController', () => {
     const mockConfigService = {
       get: jest.fn().mockImplementation((key) => {
         if (key === 'JWT_SECRET') return 'test-secret';
-        if (key === 'CLERK_SECRET_KEY') return 'test-clerk-secret';
-        if (key === 'CLERK_PUBLISHABLE_KEY') return 'test-clerk-publishable';
         return null;
       }),
     };
@@ -82,10 +65,6 @@ describe('UserController', () => {
           useValue: mockUserService,
         },
         {
-          provide: ClerkService,
-          useValue: mockClerkService,
-        },
-        {
           provide: JwtService,
           useValue: mockJwtService,
         },
@@ -93,16 +72,11 @@ describe('UserController', () => {
           provide: ConfigService,
           useValue: mockConfigService,
         },
-        {
-          provide: ClerkAuthGuard,
-          useClass: MockClerkAuthGuard,
-        },
       ],
     }).compile();
 
     controller = module.get<UserController>(UserController);
     userService = module.get(UserService);
-    clerkService = module.get(ClerkService);
   });
 
   it('should be defined', () => {
@@ -153,30 +127,26 @@ describe('UserController', () => {
       userService.findById.mockResolvedValue(mockUser);
 
       // Act
-      const result = await controller.getClerkCurrentUser(mockClerkUser);
+      const result = await controller.getClerkCurrentUser(mockRequest as any);
 
       // Assert
       expect(result).toEqual(mockUser);
-      expect(userService.findById).toHaveBeenCalledWith(mockClerkUser.id);
+      expect(userService.findById).toHaveBeenCalledWith(mockRequest.auth.userId);
     });
 
-    it('should create a user DTO from Clerk data when user not in database', async () => {
+    it('should create a user DTO when user not in database', async () => {
       // Arrange
       userService.findById.mockRejectedValue(new NotFoundException('User not found'));
-      clerkService.getUserInfo.mockResolvedValue(mockClerkUser);
 
       // Act
-      const result = await controller.getClerkCurrentUser(mockClerkUser);
+      const result = await controller.getClerkCurrentUser(mockRequest as any);
 
       // Assert
       expect(result).toMatchObject({
-        id: mockClerkUser.id,
-        email: mockClerkUser.email,
-        name: mockClerkUser.email.split('@')[0],
+        id: mockRequest.auth.userId,
         isAuthenticated: true,
-        hasNotionAccess: mockClerkUser.notionConnected,
+        hasNotionAccess: true,
       });
-      expect(clerkService.getUserInfo).toHaveBeenCalledWith(mockClerkUser.id);
     });
   });
 });

@@ -20,6 +20,12 @@ async function bootstrap() {
   // Use cookie parser for Clerk authentication
   app.use(cookieParser());
 
+  // Enable CORS with credentials for Clerk cookies
+  app.enableCors({
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    credentials: true,
+  });
+
   // Swagger documentation setup
   const config = new DocumentBuilder()
     .setTitle('Notion Graph View API')
@@ -60,12 +66,6 @@ async function bootstrap() {
       filter: true,
       showRequestDuration: true,
     }
-  });
-
-  // Enable CORS with credentials for Clerk cookies
-  app.enableCors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
-    credentials: true,
   });
 
   // Get port from environment or use default
