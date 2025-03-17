@@ -59,6 +59,50 @@ export class NotionApiService {
   }
 
   /**
+   * Get all databases the user has access to
+   * @returns Array of database objects
+   */
+  async getAllDatabases(): Promise<DatabaseObjectResponse[]> {
+    try {
+      this.logger.log('Fetching all databases from Notion');
+      
+      const allDatabases: DatabaseObjectResponse[] = [];
+      let hasMore = true;
+      let startCursor: string | undefined = undefined;
+      
+      // Paginate through all results
+      while (hasMore) {
+        const response = await this.rateLimiter.execute(() =>
+          this.client.search({
+            filter: { property: 'object', value: 'database' },
+            start_cursor: startCursor,
+            page_size: 100, // Maximum allowed by Notion API
+          })
+        );
+        
+        const typedResponse = response as SearchResponse;
+        
+        // Filter and add database objects to the result array
+        const databases = typedResponse.results
+          .filter((item): item is DatabaseObjectResponse => 
+            item.object === 'database' && 'title' in item
+          );
+        
+        allDatabases.push(...databases);
+        
+        hasMore = typedResponse.has_more;
+        startCursor = typedResponse.next_cursor ?? undefined;
+      }
+      
+      this.logger.log(`Found ${allDatabases.length} databases`);
+      return allDatabases;
+    } catch (error) {
+      this.handleApiError('getAllDatabases', '', error);
+      throw error;
+    }
+  }
+
+  /**
    * Query a database for its pages
    * @param databaseId The ID of the database to query
    * @param params Optional query parameters

@@ -374,4 +374,6 @@ export class GraphDocument extends Document {
   settings: GraphSettingsDocument;
 }
 
-export const GraphSchema = SchemaFactory.createForClass(GraphDocument); 
+export const GraphSchema = SchemaFactory.createForClass(GraphDocument);
+export const NodeSchema = SchemaFactory.createForClass(NodeDocument);
+export const EdgeSchema = SchemaFactory.createForClass(EdgeDocument); 

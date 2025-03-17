@@ -1,39 +1,38 @@
-import { Injectable, OnModuleDestroy, OnModuleInit, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
-  private client: Redis;
   private readonly logger = new Logger(RedisService.name);
-
-  constructor(private configService: ConfigService) {
+  private readonly client: Redis;
+  
+  constructor(private readonly configService: ConfigService) {
+    const redisHost = this.configService.get<string>('REDIS_HOST', 'localhost');
+    const redisPort = this.configService.get<number>('REDIS_PORT', 6379);
+    
     this.client = new Redis({
-      host: this.configService.get('REDIS_HOST', 'localhost'),
-      port: this.configService.get('REDIS_PORT', 6379),
+      host: redisHost,
+      port: redisPort,
+      lazyConnect: true,
     });
     
-    this.logger.log(`Redis client configured: ${this.configService.get('REDIS_HOST', 'localhost')}:${this.configService.get('REDIS_PORT', 6379)}`);
+    this.logger.log(`Redis client configured: ${redisHost}:${redisPort}`);
   }
-
+  
   async onModuleInit() {
-    // Verify Redis connection on startup
     try {
-      await this.client.ping();
-      this.logger.log('Redis connection verified');
+      await this.client.connect();
+      this.logger.log('Redis client connected');
     } catch (error) {
-      this.logger.error('Redis connection failed', error);
-      throw new Error('Redis connection failed');
+      this.logger.error('Failed to connect to Redis', error);
+      throw error;
     }
   }
-
+  
   async onModuleDestroy() {
     await this.client.quit();
-    this.logger.log('Redis connection closed');
-  }
-
-  getClient(): Redis {
-    return this.client;
+    this.logger.log('Redis client disconnected');
   }
   
   /**

@@ -3,7 +3,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 // Controllers
-import { AuthController } from './interfaces/http/controllers/auth.controller';
 import { UserController } from './interfaces/http/controllers/user.controller';
 
 // Services
@@ -36,7 +35,6 @@ import { EventBusModule } from '../shared/infrastructure/event-bus/event-bus.mod
     EventBusModule,
   ],
   controllers: [
-    AuthController,
     UserController,
   ],
   providers: [

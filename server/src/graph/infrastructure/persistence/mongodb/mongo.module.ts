@@ -11,6 +11,7 @@ import { GraphMapper } from './graph.mapper';
     ]),
   ],
   providers: [
+    MongoGraphRepository,
     GraphMapper,
     {
       provide: 'IGraphRepository',
@@ -20,6 +21,7 @@ import { GraphMapper } from './graph.mapper';
   exports: [
     'IGraphRepository',
     GraphMapper,
+    MongooseModule,
   ],
 })
 export class GraphMongoModule {} 
