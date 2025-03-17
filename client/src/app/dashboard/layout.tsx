@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { SignOutButton } from '@clerk/nextjs';
+import { Toaster } from 'sonner'
+
 export default function DashboardLayout({
   children,
 }: {
@@ -261,6 +263,7 @@ export default function DashboardLayout({
           </div>
         </div>
       </main>
+      <Toaster position="bottom-right" />
     </div>
   );
 } 

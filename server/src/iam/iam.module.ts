@@ -7,16 +7,19 @@ import { AuthController } from './interfaces/http/controllers/auth.controller';
 import { UserController } from './interfaces/http/controllers/user.controller';
 
 // Services
-import { AuthService } from './application/services/auth.service';
+import { ClerkService } from './infrastructure/clerk/clerk.service';
 import { UserService } from './application/services/user.service';
 
 // Guards
 import { AuthGuard } from './interfaces/http/guards/auth.guard';
 import { SubscriptionGuard } from './interfaces/http/guards/subscription.guard';
+import { ClerkAuthGuard } from './interfaces/http/guards/clerk-auth.guard';
 
 // Infrastructure
 import { IAMMongoModule } from './infrastructure/persistence/mongodb/mongo.module';
 import { EventBusModule } from '../shared/infrastructure/event-bus/event-bus.module';
+
+// Clerk
 
 @Module({
   imports: [
@@ -38,17 +41,18 @@ import { EventBusModule } from '../shared/infrastructure/event-bus/event-bus.mod
   ],
   providers: [
     // Services
-    AuthService,
     UserService,
+    ClerkService,
     
     // Guards
-    AuthGuard,
+    ClerkAuthGuard,
     SubscriptionGuard,
+    ClerkAuthGuard,
   ],
   exports: [
-    AuthService,
     UserService,
-    AuthGuard,
+    ClerkService,
+    ClerkAuthGuard,
     SubscriptionGuard,
     JwtModule,
   ],

@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SWAGGER_CUSTOM_DOCUMENT } from './swagger-custom';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,9 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
     transform: true,
   }));
+
+  // Use cookie parser for Clerk authentication
+  app.use(cookieParser());
 
   // Swagger documentation setup
   const config = new DocumentBuilder()
@@ -58,10 +62,15 @@ async function bootstrap() {
     }
   });
 
-  // Enable CORS
-  app.enableCors();
+  // Enable CORS with credentials for Clerk cookies
+  app.enableCors({
+    origin: process.env.APP_URL || 'http://localhost:3000',
+    credentials: true,
+  });
 
-  await app.listen(3000);
+  // Get port from environment or use default
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
   console.log(`Application is running on: ${await app.getUrl()}`);
   console.log(`API documentation is available at: ${await app.getUrl()}/api-docs`);
 }

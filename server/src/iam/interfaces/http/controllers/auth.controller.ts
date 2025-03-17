@@ -8,11 +8,18 @@ import {
 } from '../../../application/dtos/auth-request.dto';
 import { AuthResponseDto } from '../../../application/dtos/auth-response.dto';
 import { AuthGuard } from '../guards/auth.guard';
+import { ClerkAuthGuard } from '../guards/clerk-auth.guard';
+import { ClerkService } from '../../../infrastructure/clerk/clerk.service';
+import { ClerkUser } from '../decorators/clerk-user.decorator';
+import { ClerkAuthUser } from '../../../application/dtos/clerk-session.dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly clerkService: ClerkService,
+  ) {}
 
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
@@ -64,5 +71,28 @@ export class AuthController {
   ): Promise<AuthResponseDto> {
     const userId = request.user.sub;
     return this.authService.connectNotion(userId, dto);
+  }
+  
+  @Post('clerk/notion/connect')
+  @UseGuards(ClerkAuthGuard)
+  @ApiOperation({ summary: 'Connect Notion account using Clerk authentication' })
+  @ApiResponse({ 
+    status: HttpStatus.OK, 
+    description: 'Notion account connected successfully',
+    type: AuthResponseDto
+  })
+  @ApiResponse({ 
+    status: HttpStatus.UNAUTHORIZED, 
+    description: 'User not authenticated or not found' 
+  })
+  async connectNotionWithClerk(
+    @ClerkUser() user: ClerkAuthUser,
+    @Body() dto: NotionAuthDto
+  ): Promise<AuthResponseDto> {
+    // Update Notion token in Clerk
+    await this.clerkService.updateNotionAccessToken(user.id, dto.accessToken);
+    
+    // Connect Notion through the authService
+    return this.authService.connectNotion(user.id, dto);
   }
 } 
