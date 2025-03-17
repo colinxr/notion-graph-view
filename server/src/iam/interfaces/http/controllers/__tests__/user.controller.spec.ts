@@ -5,10 +5,12 @@ import { UserService } from '../../../../application/services/user.service';
 import { UserDto, UserListDto } from '../../../../application/dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { AuthGuard } from '../../guards/auth.guard';
+import { ClerkAuthGuard } from '../../guards/clerk-auth.guard';
+import { ClerkService } from '../../../../infrastructure/clerk/clerk.service';
+import { ClerkAuthUser } from '../../../../application/dtos/clerk-session.dto';
 
 // Create a mock AuthGuard
-class MockAuthGuard {
+class MockClerkAuthGuard {
   canActivate() {
     return true;
   }
@@ -17,6 +19,7 @@ class MockAuthGuard {
 describe('UserController', () => {
   let controller: UserController;
   let userService: jest.Mocked<UserService>;
+  let clerkService: jest.Mocked<ClerkService>;
 
   // Sample data
   const mockUser: UserDto = {
@@ -34,13 +37,26 @@ describe('UserController', () => {
     total: 2,
   };
 
+  const mockClerkUser: ClerkAuthUser = {
+    id: 'clerk_test_id',
+    email: 'clerk_test@example.com',
+    notionConnected: true,
+  };
+
   beforeEach(async () => {
     // Create mock service
     const mockUserService = {
       findById: jest.fn(),
+      findAll: jest.fn(),
       findByEmail: jest.fn(),
       findByNotionWorkspace: jest.fn(),
-      findAll: jest.fn(),
+    };
+
+    // Mock ClerkService
+    const mockClerkService = {
+      validateRequest: jest.fn(),
+      getUserInfo: jest.fn(),
+      updateNotionAccessToken: jest.fn(),
     };
 
     // Mock implementations for JwtService and ConfigService
@@ -52,6 +68,8 @@ describe('UserController', () => {
     const mockConfigService = {
       get: jest.fn().mockImplementation((key) => {
         if (key === 'JWT_SECRET') return 'test-secret';
+        if (key === 'CLERK_SECRET_KEY') return 'test-clerk-secret';
+        if (key === 'CLERK_PUBLISHABLE_KEY') return 'test-clerk-publishable';
         return null;
       }),
     };
@@ -64,6 +82,10 @@ describe('UserController', () => {
           useValue: mockUserService,
         },
         {
+          provide: ClerkService,
+          useValue: mockClerkService,
+        },
+        {
           provide: JwtService,
           useValue: mockJwtService,
         },
@@ -72,14 +94,15 @@ describe('UserController', () => {
           useValue: mockConfigService,
         },
         {
-          provide: AuthGuard,
-          useClass: MockAuthGuard,
+          provide: ClerkAuthGuard,
+          useClass: MockClerkAuthGuard,
         },
       ],
     }).compile();
 
     controller = module.get<UserController>(UserController);
     userService = module.get(UserService);
+    clerkService = module.get(ClerkService);
   });
 
   it('should be defined', () => {
@@ -110,54 +133,6 @@ describe('UserController', () => {
     });
   });
 
-  describe('findByEmail', () => {
-    it('should return a user when found', async () => {
-      // Arrange
-      userService.findByEmail.mockResolvedValue(mockUser);
-      const email = 'test@example.com';
-
-      // Act
-      const result = await controller.findByEmail(email);
-
-      // Assert
-      expect(result).toEqual(mockUser);
-      expect(userService.findByEmail).toHaveBeenCalledWith(email);
-    });
-
-    it('should forward NotFoundException when user not found', async () => {
-      // Arrange
-      userService.findByEmail.mockRejectedValue(new NotFoundException('User not found'));
-      const email = 'nonexistent@example.com';
-
-      // Act & Assert
-      await expect(controller.findByEmail(email)).rejects.toThrow(NotFoundException);
-    });
-  });
-
-  describe('findByNotionWorkspace', () => {
-    it('should return a user when found', async () => {
-      // Arrange
-      userService.findByNotionWorkspace.mockResolvedValue(mockUser);
-      const workspaceId = 'workspace_id';
-
-      // Act
-      const result = await controller.findByNotionWorkspace(workspaceId);
-
-      // Assert
-      expect(result).toEqual(mockUser);
-      expect(userService.findByNotionWorkspace).toHaveBeenCalledWith(workspaceId);
-    });
-
-    it('should forward NotFoundException when user not found', async () => {
-      // Arrange
-      userService.findByNotionWorkspace.mockRejectedValue(new NotFoundException('User not found'));
-      const workspaceId = 'nonexistent_workspace';
-
-      // Act & Assert
-      await expect(controller.findByNotionWorkspace(workspaceId)).rejects.toThrow(NotFoundException);
-    });
-  });
-
   describe('findAll', () => {
     it('should return all users', async () => {
       // Arrange
@@ -172,29 +147,36 @@ describe('UserController', () => {
     });
   });
 
-  describe('getCurrentUser', () => {
-    it('should return the current authenticated user', async () => {
+  describe('getClerkCurrentUser', () => {
+    it('should return user from database when found', async () => {
       // Arrange
-      const userId = 'test_id';
-      const mockRequest = { user: { sub: userId } };
       userService.findById.mockResolvedValue(mockUser);
 
       // Act
-      const result = await controller.getCurrentUser(mockRequest as any);
+      const result = await controller.getClerkCurrentUser(mockClerkUser);
 
       // Assert
       expect(result).toEqual(mockUser);
-      expect(userService.findById).toHaveBeenCalledWith(userId);
+      expect(userService.findById).toHaveBeenCalledWith(mockClerkUser.id);
     });
 
-    it('should forward NotFoundException when current user not found', async () => {
+    it('should create a user DTO from Clerk data when user not in database', async () => {
       // Arrange
-      const userId = 'nonexistent_id';
-      const mockRequest = { user: { sub: userId } };
       userService.findById.mockRejectedValue(new NotFoundException('User not found'));
+      clerkService.getUserInfo.mockResolvedValue(mockClerkUser);
 
-      // Act & Assert
-      await expect(controller.getCurrentUser(mockRequest as any)).rejects.toThrow(NotFoundException);
+      // Act
+      const result = await controller.getClerkCurrentUser(mockClerkUser);
+
+      // Assert
+      expect(result).toMatchObject({
+        id: mockClerkUser.id,
+        email: mockClerkUser.email,
+        name: mockClerkUser.email.split('@')[0],
+        isAuthenticated: true,
+        hasNotionAccess: mockClerkUser.notionConnected,
+      });
+      expect(clerkService.getUserInfo).toHaveBeenCalledWith(mockClerkUser.id);
     });
   });
-}); 
+});
