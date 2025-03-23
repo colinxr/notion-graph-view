@@ -9,7 +9,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GraphMongoModule } from './infrastructure/persistence/mongodb/mongo.module';
 
 // Domain layer
-import { GraphSchema, NodeDocument, EdgeDocument } from './infrastructure/persistence/mongodb/graph.schema';
+import { GraphSchema, NodeDocument, EdgeDocument, NodeSchema, EdgeSchema } from './infrastructure/persistence/mongodb/graph.schema';
 import { GraphMapper } from './infrastructure/persistence/mongodb/graph.mapper';
 import { MongoGraphRepository } from './infrastructure/persistence/mongodb/graph.repository';
 
@@ -37,9 +37,8 @@ import { SubscriptionGuard } from '../iam/interfaces/http/guards/subscription.gu
     NotionModule,
     EventEmitterModule.forRoot(),
     MongooseModule.forFeature([
-      { name: 'GraphDocumentModel', schema: GraphSchema },
-      { name: 'Node', schema: NodeDocument },
-      { name: 'Edge', schema: EdgeDocument },
+      { name: 'Node', schema: NodeSchema },
+      { name: 'Edge', schema: EdgeSchema },
     ]),
     ConfigModule,
     JwtModule.registerAsync({

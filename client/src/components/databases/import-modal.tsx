@@ -9,8 +9,13 @@ import React from 'react'
 interface NotionDatabase {
   id: string
   title: string
-  workspaceName: string
-  icon?: string
+  workspaceId: string
+  url: string
+  lastSyncedAt?: Date
+  description?: string
+  createdAt?: Date
+  updatedAt?: Date
+  pageCount?: number
 }
 
 export function ImportDatabaseModal({ 
@@ -26,10 +31,10 @@ export function ImportDatabaseModal({
 
   // Fetch available Notion databases only when modal is open
   const { data: databases, isLoading } = useQuery<NotionDatabase[]>({
-    queryKey: ['notion-available-databases'],
+    queryKey: ['notion-databases'],
     queryFn: async () => {
-      console.log('Fetching available databases');
-      return await apiClient.get('/notion/available-databases')
+      console.log('Fetching databases from API');
+      return await apiClient.get('notion/databases')
     },
     enabled: isOpen // Only fetch when modal is open
   })
@@ -97,11 +102,10 @@ export function ImportDatabaseModal({
                 onClick={() => setSelectedDatabase(database.id)}
               >
                 <div className="flex items-center gap-2">
-                  {database.icon && <span>{database.icon}</span>}
                   <div>
                     <div className="font-medium">{database.title}</div>
                     <div className="text-sm text-muted-foreground">
-                      {database.workspaceName}
+                      {database.description || database.url}
                     </div>
                   </div>
                 </div>

@@ -68,7 +68,7 @@ export default function AllGraphsPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <select className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+          <select className="h-10 rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <option value="">All Categories</option>
             <option value="projects">Projects</option>
             <option value="content">Content</option>
@@ -77,7 +77,7 @@ export default function AllGraphsPage() {
             <option value="products">Products</option>
             <option value="clients">Clients</option>
           </select>
-          <select className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+          <select className="h-10 rounded-md border  border-gray-200 border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <option value="recent">Recently Updated</option>
             <option value="az">A-Z</option>
             <option value="za">Z-A</option>

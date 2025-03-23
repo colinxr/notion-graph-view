@@ -1,116 +1,6 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/auth/register": {
-      "post": {
-        "operationId": "AuthController_register",
-        "summary": "Register a new user",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "User successfully registered",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthResponseDto"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "User already exists"
-          }
-        },
-        "tags": [
-          "auth"
-        ]
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "operationId": "AuthController_login",
-        "summary": "Login with email and password",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Login successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid credentials"
-          }
-        },
-        "tags": [
-          "auth"
-        ]
-      }
-    },
-    "/auth/notion/connect": {
-      "post": {
-        "operationId": "AuthController_connectNotion",
-        "summary": "Connect Notion account",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NotionAuthDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Notion account connected successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User not authenticated or not found"
-          }
-        },
-        "tags": [
-          "auth"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    },
     "/users": {
       "get": {
         "operationId": "UserController_findAll",
@@ -138,10 +28,10 @@
         ]
       }
     },
-    "/users/me": {
+    "/users/clerk/me": {
       "get": {
-        "operationId": "UserController_getCurrentUser",
-        "summary": "Get current user profile",
+        "operationId": "UserController_getClerkCurrentUser",
+        "summary": "Get current user profile using Clerk authentication",
         "parameters": [],
         "responses": {
           "200": {
@@ -160,11 +50,6 @@
         },
         "tags": [
           "users"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
         ]
       }
     },
@@ -208,102 +93,12 @@
         ]
       }
     },
-    "/users/email/{email}": {
-      "get": {
-        "operationId": "UserController_findByEmail",
-        "summary": "Get user by email",
-        "parameters": [
-          {
-            "name": "email",
-            "required": true,
-            "in": "path",
-            "description": "User email",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns user by email",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found"
-          }
-        },
-        "tags": [
-          "users"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    },
-    "/users/notion-workspace/{workspaceId}": {
-      "get": {
-        "operationId": "UserController_findByNotionWorkspace",
-        "summary": "Get user by Notion workspace ID",
-        "parameters": [
-          {
-            "name": "workspaceId",
-            "required": true,
-            "in": "path",
-            "description": "Notion workspace ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns user by Notion workspace ID",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found"
-          }
-        },
-        "tags": [
-          "users"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    },
-    "/notion/databases": {
+    "/api/v1/notion/databases": {
       "get": {
         "operationId": "NotionDatabaseController_getDatabases",
         "summary": "Get all databases for the authenticated user",
-        "description": "Returns a list of Notion databases the user has access to. Can be filtered by workspace ID.",
-        "parameters": [
-          {
-            "name": "workspace",
-            "required": false,
-            "in": "query",
-            "description": "Filter databases by workspace ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "description": "Returns a list of Notion databases the user has access to.",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "List of databases returned successfully",
@@ -330,12 +125,12 @@
         ],
         "security": [
           {
-            "JWT-auth": []
+            "__session": []
           }
         ]
       }
     },
-    "/notion/databases/{id}": {
+    "/api/v1/notion/databases/{id}": {
       "get": {
         "operationId": "NotionDatabaseController_getDatabase",
         "summary": "Get a specific database by ID",
@@ -378,12 +173,12 @@
         ],
         "security": [
           {
-            "JWT-auth": []
+            "__session": []
           }
         ]
       }
     },
-    "/notion/databases/{id}/sync": {
+    "/api/v1/notion/databases/{id}/sync": {
       "post": {
         "operationId": "NotionDatabaseController_syncDatabase",
         "summary": "Sync a database with Notion",
@@ -426,306 +221,988 @@
         ],
         "security": [
           {
-            "JWT-auth": []
+            "__session": []
           }
         ]
       }
     },
-    "/notion/pages": {
+    "/graphs": {
+      "post": {
+        "operationId": "GraphController_createGraph",
+        "summary": "Create a new graph",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGraphDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Graph created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
       "get": {
-        "operationId": "NotionPageController_getPages",
-        "summary": "Get pages filtered by database ID",
-        "description": "Returns a list of Notion pages. Can be filtered by database ID.",
+        "operationId": "GraphController_getGraphs",
+        "summary": "Get all graphs accessible to the user",
         "parameters": [
           {
-            "name": "database",
+            "name": "owned",
             "required": false,
             "in": "query",
-            "description": "Filter pages by database ID",
+            "description": "Filter to only show owned graphs",
             "schema": {
-              "example": "db_123456789",
-              "type": "string"
+              "type": "boolean"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "List of pages returned successfully",
+            "description": "Graphs retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NotionPageDto"
+                    "$ref": "#/components/schemas/GraphSummaryResponseDto"
                   }
                 }
               }
             }
-          },
-          "401": {
-            "description": "Not authenticated"
-          },
-          "403": {
-            "description": "Not authorized (subscription required)"
           }
         },
         "tags": [
-          "notion-pages"
+          "Graphs"
         ],
         "security": [
           {
-            "JWT-auth": []
+            "bearer": []
           }
         ]
       }
     },
-    "/notion/pages/{id}": {
+    "/graphs/public": {
       "get": {
-        "operationId": "NotionPageController_getPage",
-        "summary": "Get a specific page by ID",
-        "description": "Returns detailed information about a single Notion page.",
+        "operationId": "GraphController_getPublicGraphs",
+        "summary": "Get public graphs",
         "parameters": [
           {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "The ID of the page to retrieve",
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of graphs to return",
             "schema": {
-              "example": "page_123456789",
-              "type": "string"
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of graphs to skip",
+            "schema": {
+              "type": "number"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Page returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotionPageDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not authenticated"
-          },
-          "403": {
-            "description": "Not authorized (subscription required)"
-          },
-          "404": {
-            "description": "Page not found"
-          }
-        },
-        "tags": [
-          "notion-pages"
-        ],
-        "security": [
-          {
-            "JWT-auth": []
-          }
-        ]
-      }
-    },
-    "/notion/pages/{id}/with-backlinks": {
-      "get": {
-        "operationId": "NotionPageController_getPageWithBacklinks",
-        "summary": "Get a page with its backlinks",
-        "description": "Returns a page along with all backlinks referencing it from other pages.",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "The ID of the page to retrieve with backlinks",
-            "schema": {
-              "example": "page_123456789",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Page with backlinks returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotionPageDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not authenticated"
-          },
-          "403": {
-            "description": "Not authorized (subscription required)"
-          },
-          "404": {
-            "description": "Page not found"
-          }
-        },
-        "tags": [
-          "notion-pages"
-        ],
-        "security": [
-          {
-            "JWT-auth": []
-          }
-        ]
-      }
-    },
-    "/notion/pages/{id}/outgoing-backlinks": {
-      "get": {
-        "operationId": "NotionPageController_getOutgoingBacklinks",
-        "summary": "Get pages that are linked from this page",
-        "description": "Returns a list of pages that the specified page links to.",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "The ID of the source page",
-            "schema": {
-              "example": "page_123456789",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Outgoing backlinks returned successfully",
+            "description": "Public graphs retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NotionPageDto"
+                    "$ref": "#/components/schemas/GraphSummaryResponseDto"
                   }
                 }
               }
             }
-          },
-          "401": {
-            "description": "Not authenticated"
-          },
-          "403": {
-            "description": "Not authorized (subscription required)"
           }
         },
         "tags": [
-          "notion-pages"
+          "Graphs"
         ],
         "security": [
           {
-            "JWT-auth": []
+            "bearer": []
           }
         ]
       }
     },
-    "/notion/pages/{id}/sync": {
-      "post": {
-        "operationId": "NotionPageController_syncPage",
-        "summary": "Sync a page with Notion",
-        "description": "Updates the local copy of the page with the latest data from Notion.",
+    "/graphs/search": {
+      "get": {
+        "operationId": "GraphController_searchGraphs",
+        "summary": "Search for graphs",
         "parameters": [
           {
-            "name": "id",
+            "name": "query",
             "required": true,
-            "in": "path",
-            "description": "The ID of the page to sync",
+            "in": "query",
+            "description": "Search query",
             "schema": {
-              "example": "page_123456789",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Page sync completed successfully",
+            "description": "Search results retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageSyncResultDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GraphSummaryResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/{id}": {
+      "get": {
+        "operationId": "GraphController_getGraphById",
+        "summary": "Get a graph by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Graph retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
                 }
               }
             }
           },
-          "401": {
-            "description": "Not authenticated"
-          },
-          "403": {
-            "description": "Not authorized (subscription required)"
-          },
           "404": {
-            "description": "Page not found"
+            "description": "Graph not found"
           }
         },
         "tags": [
-          "notion-pages"
+          "Graphs"
         ],
         "security": [
           {
-            "JWT-auth": []
+            "bearer": []
           }
         ]
-      }
-    },
-    "/notion/pages/{id}/extract-backlinks": {
-      "post": {
-        "operationId": "NotionPageController_extractBacklinks",
-        "summary": "Extract backlinks for a specific page",
-        "description": "Extracts backlinks from the page content and returns the count of found links.",
+      },
+      "put": {
+        "operationId": "GraphController_updateGraph",
+        "summary": "Update a graph",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "The ID of the page to extract backlinks for",
+            "description": "Graph ID",
             "schema": {
-              "example": "page_123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGraphDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Graph updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Graph not found"
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "GraphController_deleteGraph",
+        "summary": "Delete a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Graph deleted successfully"
+          },
+          "404": {
+            "description": "Graph not found"
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/{id}/nodes": {
+      "post": {
+        "operationId": "GraphController_addNode",
+        "summary": "Add a node to a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Node added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/{id}/nodes/{nodeId}": {
+      "put": {
+        "operationId": "GraphController_updateNode",
+        "summary": "Update a node in a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nodeId",
+            "required": true,
+            "in": "path",
+            "description": "Node ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Node updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "GraphController_removeNode",
+        "summary": "Remove a node from a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nodeId",
+            "required": true,
+            "in": "path",
+            "description": "Node ID",
+            "schema": {
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Backlinks extracted successfully",
+            "description": "Node removed successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "pageId": {
-                      "type": "string",
-                      "description": "ID of the page processed",
-                      "example": "page_123456789"
-                    },
-                    "backlinkCount": {
-                      "type": "number",
-                      "description": "Number of backlinks found",
-                      "example": 5
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/{id}/edges": {
+      "post": {
+        "operationId": "GraphController_addEdge",
+        "summary": "Add an edge to a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEdgeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Edge added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/{id}/edges/{edgeId}": {
+      "put": {
+        "operationId": "GraphController_updateEdge",
+        "summary": "Update an edge in a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "edgeId",
+            "required": true,
+            "in": "path",
+            "description": "Edge ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEdgeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Edge updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "GraphController_removeEdge",
+        "summary": "Remove an edge from a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "edgeId",
+            "required": true,
+            "in": "path",
+            "description": "Edge ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Edge removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/generate/database/{databaseId}": {
+      "post": {
+        "operationId": "GraphController_generateFromDatabase",
+        "summary": "Generate a graph from a Notion database",
+        "parameters": [
+          {
+            "name": "databaseId",
+            "required": true,
+            "in": "path",
+            "description": "Notion database ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "description": "Name for the generated graph",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Description for the generated graph",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxDepth",
+            "required": false,
+            "in": "query",
+            "description": "Maximum depth for backlink traversal",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Graph generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/generate/page/{pageId}": {
+      "post": {
+        "operationId": "GraphController_generateFromPage",
+        "summary": "Generate a graph from a Notion page and its backlinks",
+        "parameters": [
+          {
+            "name": "pageId",
+            "required": true,
+            "in": "path",
+            "description": "Notion page ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "description": "Name for the generated graph",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Description for the generated graph",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxDepth",
+            "required": false,
+            "in": "query",
+            "description": "Maximum depth for backlink traversal",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Graph generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/combine": {
+      "post": {
+        "operationId": "GraphController_combineGraphs",
+        "summary": "Combine multiple graphs into a new graph",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "description": "Name for the combined graph",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Description for the combined graph",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Graphs combined successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Graphs"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/{id}/share": {
+      "post": {
+        "operationId": "SharingController_shareGraph",
+        "summary": "Share a graph with other users",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareGraphDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Graph shared successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized to share this graph"
+          },
+          "404": {
+            "description": "Graph not found"
+          }
+        },
+        "tags": [
+          "Graph Sharing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "SharingController_removeSharing",
+        "summary": "Remove sharing for a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sharing removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized to modify sharing for this graph"
+          },
+          "404": {
+            "description": "Graph not found"
+          }
+        },
+        "tags": [
+          "Graph Sharing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/{id}/public": {
+      "post": {
+        "operationId": "SharingController_setPublicVisibility",
+        "summary": "Set public visibility for a graph",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPublicVisibilityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Public visibility set successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized to modify this graph"
+          },
+          "404": {
+            "description": "Graph not found"
+          }
+        },
+        "tags": [
+          "Graph Sharing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/graphs/{id}/shared-users": {
+      "get": {
+        "operationId": "SharingController_getSharedUsers",
+        "summary": "Get users with whom a graph is shared",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Graph ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shared users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "401": {
-            "description": "Not authenticated"
-          },
           "403": {
-            "description": "Not authorized (subscription required)"
+            "description": "Not authorized to view this graph"
           },
           "404": {
-            "description": "Page not found"
+            "description": "Graph not found"
           }
         },
         "tags": [
-          "notion-pages"
+          "Graph Sharing"
         ],
         "security": [
           {
-            "JWT-auth": []
+            "bearer": []
           }
         ]
       }
@@ -762,112 +1239,6 @@
       }
     },
     "schemas": {
-      "RegisterUserDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "john.doe@example.com"
-          },
-          "name": {
-            "type": "string",
-            "example": "John Doe"
-          },
-          "password": {
-            "type": "string",
-            "example": "password123",
-            "minLength": 8
-          }
-        },
-        "required": [
-          "email",
-          "name",
-          "password"
-        ]
-      },
-      "AuthTokenResponseDto": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string",
-            "example": "jwt_token_here"
-          },
-          "expiresAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2024-03-07T12:00:00Z"
-          }
-        },
-        "required": [
-          "token",
-          "expiresAt"
-        ]
-      },
-      "AuthResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "email": {
-            "type": "string",
-            "example": "john.doe@example.com"
-          },
-          "name": {
-            "type": "string",
-            "example": "John Doe"
-          },
-          "token": {
-            "$ref": "#/components/schemas/AuthTokenResponseDto"
-          },
-          "hasNotionAccess": {
-            "type": "boolean",
-            "example": true
-          }
-        },
-        "required": [
-          "id",
-          "email",
-          "name",
-          "token",
-          "hasNotionAccess"
-        ]
-      },
-      "LoginUserDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "john.doe@example.com"
-          },
-          "password": {
-            "type": "string",
-            "example": "password123"
-          }
-        },
-        "required": [
-          "email",
-          "password"
-        ]
-      },
-      "NotionAuthDto": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "example": "notion_access_token"
-          },
-          "workspaceId": {
-            "type": "string",
-            "example": "workspace_id"
-          }
-        },
-        "required": [
-          "accessToken",
-          "workspaceId"
-        ]
-      },
       "UserDto": {
         "type": "object",
         "properties": {
@@ -1036,189 +1407,45 @@
           "syncedAt"
         ]
       },
-      "PagePropertyDto": {
+      "CreateGraphDto": {
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier for the page property",
-            "example": "prop_123456789"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the property",
-            "example": "Status"
-          },
-          "type": {
-            "type": "string",
-            "description": "Type of the property (e.g., select, date, text)",
-            "example": "select"
-          },
-          "value": {
-            "type": "object",
-            "description": "Value of the property, can be of different types",
-            "example": "In Progress"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "type",
-          "value"
-        ]
+        "properties": {}
       },
-      "BacklinkDto": {
+      "GraphResponseDto": {
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier for the backlink",
-            "example": "bl_123456789"
-          },
-          "sourcePageId": {
-            "type": "string",
-            "description": "ID of the source page that contains the backlink",
-            "example": "page_abcdef123"
-          },
-          "sourcePageTitle": {
-            "type": "string",
-            "description": "Title of the source page",
-            "example": "Meeting Notes"
-          },
-          "targetPageId": {
-            "type": "string",
-            "description": "ID of the target page that is being linked to",
-            "example": "page_xyz789"
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Timestamp when the backlink was created",
-            "example": "2023-01-15T12:30:45.123Z"
-          },
-          "context": {
-            "type": "string",
-            "description": "Surrounding text context of the backlink",
-            "example": "As discussed in [[Project Plan]], we need to..."
-          }
-        },
-        "required": [
-          "id",
-          "sourcePageId",
-          "sourcePageTitle",
-          "targetPageId",
-          "createdAt"
-        ]
+        "properties": {}
       },
-      "NotionPageDto": {
+      "GraphSummaryResponseDto": {
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier for the page",
-            "example": "page_123456789"
-          },
-          "title": {
-            "type": "string",
-            "description": "Title of the page",
-            "example": "Project Kickoff"
-          },
-          "databaseId": {
-            "type": "string",
-            "description": "ID of the database that contains this page",
-            "example": "db_123456789"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the page in Notion",
-            "example": "https://notion.so/workspace/page-123456789"
-          },
-          "content": {
-            "type": "string",
-            "description": "Markdown content of the page",
-            "example": "# Project Kickoff\nThis is the kickoff meeting for our new project..."
-          },
-          "properties": {
-            "description": "List of properties for the page",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PagePropertyDto"
-            }
-          },
-          "backlinks": {
-            "description": "List of backlinks referencing this page",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BacklinkDto"
-            }
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Timestamp when the page was created",
-            "example": "2023-01-01T10:00:00.000Z"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Timestamp when the page was last updated",
-            "example": "2023-01-15T12:30:45.123Z"
-          }
-        },
-        "required": [
-          "id",
-          "title",
-          "databaseId",
-          "url",
-          "properties",
-          "backlinks",
-          "createdAt",
-          "updatedAt"
-        ]
+        "properties": {}
       },
-      "PageSyncResultDto": {
+      "UpdateGraphDto": {
         "type": "object",
-        "properties": {
-          "pageId": {
-            "type": "string",
-            "description": "ID of the page that was synced",
-            "example": "page_123456789"
-          },
-          "databaseId": {
-            "type": "string",
-            "description": "ID of the database containing the page",
-            "example": "db_123456789"
-          },
-          "backlinkCount": {
-            "type": "number",
-            "description": "Number of backlinks found and extracted",
-            "example": 3
-          },
-          "contentUpdated": {
-            "type": "boolean",
-            "description": "Whether the page content was updated during sync",
-            "example": true
-          },
-          "propertiesUpdated": {
-            "type": "boolean",
-            "description": "Whether any page properties were updated during sync",
-            "example": false
-          },
-          "syncedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Timestamp when the sync was completed",
-            "example": "2023-01-15T12:30:45.123Z"
-          }
-        },
-        "required": [
-          "pageId",
-          "databaseId",
-          "backlinkCount",
-          "contentUpdated",
-          "propertiesUpdated",
-          "syncedAt"
-        ]
+        "properties": {}
+      },
+      "CreateNodeDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateNodeDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateEdgeDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateEdgeDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ShareGraphDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SetPublicVisibilityDto": {
+        "type": "object",
+        "properties": {}
       }
     }
   }

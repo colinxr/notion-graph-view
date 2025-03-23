@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongoDBModule } from './shared/infrastructure/persistence/mongodb/mongodb.module';
 import { RedisModule } from './shared/infrastructure/caching/redis/redis.module';
@@ -8,6 +8,7 @@ import { IAMModule } from './iam/iam.module';
 import { NotionModule } from './notion/notion.module';
 import { GraphModule } from './graph/graph.module';
 import { DocsModule } from './docs/docs.module';
+import { ClerkMiddleware } from './iam/interfaces/http/middleware/clerk.middleware';
 
 @Module({
   imports: [
@@ -34,4 +35,8 @@ import { DocsModule } from './docs/docs.module';
     LoggerService,
   ],
 })
-export class AppModule {} 
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ClerkMiddleware).forRoutes('*'); // Apply to all routes
+  }
+} 

@@ -1,32 +1,24 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
-import { JwtModule } from '@nestjs/jwt';
-
-// Controllers
+import { ConfigModule } from '@nestjs/config';
 import { NotionDatabaseController } from './interfaces/http/controllers/notion-database.controller';
-import { NotionPageController } from './interfaces/http/controllers/notion-page.controller';
-
-// Services
 import { DatabaseService } from './application/services/database.service';
-import { PageService } from './application/services/page.service';
-import { BacklinkExtractorService } from './application/services/backlink-extractor.service';
+import { DatabaseCacheService } from './application/services/database-cache.service';
 import { NotionApiService } from './infrastructure/api/notion-api.service';
 import { RateLimiterService } from './infrastructure/api/rate-limiter.service';
+import { DatabaseCacheHandler } from './application/handlers/database-cache.handler';
+import { BacklinkExtractorService } from './application/services/backlink-extractor.service';
+import { RedisModule } from '../shared/infrastructure/caching/redis/redis.module';
+import { EventBusModule } from '../shared/infrastructure/event-bus/event-bus.module';
+import { IAMModule } from '../iam/iam.module';
 
-// Entities and Schemas
+// Database schemas
 import { NotionDatabaseDocument, NotionDatabaseSchema } from './infrastructure/persistence/mongodb/notion-database.schema';
-import { NotionPageDocument, NotionPageSchema, BacklinkDocument, BacklinkSchema } from './infrastructure/persistence/mongodb/notion-page.schema';
+import { NotionPageDocument, NotionPageSchema } from './infrastructure/persistence/mongodb/notion-page.schema';
 
-// Repositories
+// Repository implementations
 import { NotionDatabaseRepository } from './infrastructure/persistence/mongodb/notion-database.repository';
 import { NotionPageRepository } from './infrastructure/persistence/mongodb/notion-page.repository';
-import { BacklinkRepository } from './infrastructure/persistence/mongodb/notion-backlink.repository';
-
-// Guards
-import { AuthGuard } from '../iam/interfaces/http/guards/auth.guard';
-import { SubscriptionGuard } from '../iam/interfaces/http/guards/subscription.guard';
 
 /**
  * Notion Module provides integration with Notion API
@@ -38,35 +30,25 @@ import { SubscriptionGuard } from '../iam/interfaces/http/guards/subscription.gu
     MongooseModule.forFeature([
       { name: NotionPageDocument.name, schema: NotionPageSchema },
       { name: NotionDatabaseDocument.name, schema: NotionDatabaseSchema },
-      { name: BacklinkDocument.name, schema: BacklinkSchema },
     ]),
-    HttpModule,
     ConfigModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '24h' },
-      }),
-      inject: [ConfigService],
-    }),
+    RedisModule,
+    EventBusModule,
+    IAMModule
   ],
-  controllers: [
-    NotionDatabaseController,
-    NotionPageController,
-  ],
+  controllers: [NotionDatabaseController],
   providers: [
     // Services
     DatabaseService,
-    PageService,
-    BacklinkExtractorService,
+    DatabaseCacheService,
     NotionApiService,
     RateLimiterService,
+    BacklinkExtractorService,
+    
+    // Event handlers
+    DatabaseCacheHandler,
     
     // Repositories
-    BacklinkRepository,
-    AuthGuard,
-    SubscriptionGuard,
     {
       provide: 'INotionDatabaseRepository',
       useClass: NotionDatabaseRepository,
@@ -75,15 +57,18 @@ import { SubscriptionGuard } from '../iam/interfaces/http/guards/subscription.gu
       provide: 'INotionPageRepository',
       useClass: NotionPageRepository,
     },
+    {
+      provide: 'BacklinkExtractorService',
+      useClass: BacklinkExtractorService,
+    },
   ],
   exports: [
-    DatabaseService,
-    PageService,
-    BacklinkExtractorService,
     NotionApiService,
-    RateLimiterService,
+    DatabaseService,
+    DatabaseCacheService,
     'INotionDatabaseRepository',
     'INotionPageRepository',
+    'BacklinkExtractorService',
   ],
 })
 export class NotionModule {} 
